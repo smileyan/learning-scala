@@ -74,9 +74,55 @@ object BasicSpec extends org.specs2.mutable.Specification {
       result.toArray must_== Array("Rarity", "Applejack")
     }
     "Classes" >> {
-      val calc = new Calculator
+      val calc = new Calculator("HP")
       calc.add(2, 4) must_== 6
-      calc.band must_== "HP"
+      // calc.band must_== "HP"
+    }
+    "Constructor" >> {
+      val calc = new Calculator("HP")
+      calc.color must_== "black"
+    }
+    "Expressions" >> {
+       // Scala is highly expression-oriented: most things are expressions rather than statements.
+       true must_== true
+    }
+    "Aside: Functions vs Methods" >> {
+      val c = new C
+      c.minc
+      c.acc must_== 1
+      c.finc()
+      c.acc must_== 2
+    }
+    "Inheritance" >> {
+      val sc = new ScientificCalculator("TT")
+      sc.log(2, 4) must_== 0.5
+    }
+    "Overloading methods" >> {
+      val esc = new EvenMoreScientificCalculator("TT")
+
+      esc must haveSuperclass[ScientificCalculator]
+      esc must haveSuperclass[Calculator]
+      esc.log(2, 4) must_== 0.5
+    }
+    "Abstract Classes" >> {
+      val c = new Circle(2)
+      c.getArea must_== 12
+    }
+    "Traits" >> {
+      val car = new BMW
+      car must beAnInstanceOf[Car]
+
+      car.brand must_== "BMW"
+      car.shineRefraction must_== 12
+    }
+    "Types" >> {
+      trait Cache[K, V] {
+        def get(key: K): V
+        def put(key: K, value: V)
+        def delete(key: K)
+        def remove[K](key: K)
+      }
+      true must_== true
     }
   }
 }
