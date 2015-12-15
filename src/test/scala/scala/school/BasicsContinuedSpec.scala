@@ -88,5 +88,87 @@ object BasicContinuedSpec extends org.specs2.mutable.Specification {
       m must_== "some other number"
 
     }
+    "Matching on type" >> {
+      def bigger(o: Any): Any = {
+        o match {
+          case i: Int if i < 0 => i - 1
+          case i: Int => i + 1
+          case d: Double if d < 0.0 => d - 0.1
+          case d: Double => d + 0.1
+          case text: String => text + "s"
+        }
+      }
+
+      val mi = bigger(-1)
+      mi must_== -2
+
+      val i = bigger(1)
+      i must_== 2
+      
+      val md = bigger(-1.1)
+      md.asInstanceOf[Double] must be ~(-1.2 +/- 0.00001)
+
+      val d = bigger(1.1)
+      d.asInstanceOf[Double] must be ~(1.2 +/- 0.00001)
+
+      val s = bigger("s")
+      s must_== "ss"
+    }
+    "Matching on class members" >> {
+      // def calcType(calc: Calculator) = calc match {
+      //   case _ if calc.brand == "ph" && calc.model == "20B" => "financial"
+      //   case _ if calc.brand == "ph" && calc.model == "48G" => "scientific"
+      //   case _ if calc.brand == "ph" && calc.model == "30B" => "business"
+      //   case _ => "unknown"
+      // }
+      true must_== true
+    }
+    "Case Classes" >> {
+      val hp20b = MyCalculator("hp", "20b")
+      val hp20B = MyCalculator("hp", "20b")
+
+      hp20b must_== hp20B
+    }
+    "Case Classes with pattern matching" >> {
+
+      def calcType(calc: MyCalculator) = calc match {
+        case MyCalculator("hp", "20B") => "financial"
+        case MyCalculator("hp", "48G") => "scientific"
+        case MyCalculator("hp", "30B") => "business"
+        // case MyCalculator(ourBrand, ourModel) => "Calculator: %s %s is of unknown type".format(ourBrand, ourModel)
+        // case MyCalculator(_, _) => "Calculator of unknown type"
+        case _ => "Calculator of unknown type"
+      }
+
+      val hp20b = calcType(MyCalculator("hp", "20B"))
+      hp20b must_== "financial"
+
+      // val hp120b = calcType(MyCalculator("hp1", "20B"))
+      // hp120b must_== "Calculator: hp1 20B is of unknown type"
+
+      // val hp120b = calcType(MyCalculator("hp1", "20B"))
+      // hp120b must_== "Calculator of unknown type"
+
+      val hp120b = calcType(MyCalculator("hp1", "20B"))
+      hp120b must_== "Calculator of unknown type"
+    }
+    "Exceptions" >> {
+      val remoteCalculatorService = MyCalculator("hp", "20b")
+      remoteCalculatorService.add(1,1) must throwA[java.lang.IllegalArgumentException]
+
+      val result: Int = try {
+        remoteCalculatorService.add(1, 2)
+      } catch {
+        case e: IllegalArgumentException => {
+          // log.error(e, "the remote calculator service is unavailable. should have kept your trusty HP.")
+          0
+        }
+      } finally {
+        remoteCalculatorService.close()
+      }
+
+      result must_== 0
+
+    }
   }
 }

@@ -11,7 +11,7 @@ class Calculator(brand: String) {
   } else {
     "white"
   }
-  
+
   // A instance method.
   def add(x: Int, y: Int): Int = x + y
 }
@@ -22,4 +22,15 @@ class ScientificCalculator(brand: String) extends Calculator(brand) {
 
 class EvenMoreScientificCalculator(brand: String) extends ScientificCalculator(brand) {
   def log(m: Int): Double = log(m, math.exp(1))
+}
+
+case class MyCalculator(brand: String, model: String) {
+
+  def add(a: Int, b: Int):Int = {
+    throw new IllegalArgumentException("test")
+  }
+
+  def close() = {
+  }
+  
 }
