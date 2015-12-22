@@ -4,6 +4,20 @@ import org.specs2._
 
 object AdvancedTypes extends org.specs2.mutable.Specification {
   "View bounds ( type classes )" >> {
+    // Implicit Arguments
+    def calcTax(amount: Float)(implicit rate: Float): Float = amount * rate
+
+    implicit val currentTaxRate = 0.08F
+
+    calcTax(50000F) must_== 4000.0
+    calcTax(50000F)(0.8F) must_== 40000.0
+
+    val list = MyList(List(1,3,5,2,4))
+
+    val r1 = list sortBy1 (i => -i)
+
+    r1 must_== List(5, 4, 3, 2, 1)
+
     // Implicit functions allow automatic conversion.
     // More precisely, they allow on-demand function application when this can help satisfy type inference. e.g.:
     implicit def strToInt(x: String) = x.toInt
@@ -43,6 +57,26 @@ object AdvancedTypes extends org.specs2.mutable.Specification {
     // (new Container("123") ).addIt must_== 246
 
     "Generic programming with views" >> {
+      // In the Scala standard library, views are primarily used to implement generic functions over collections.
+      // For example, the "min" function (on Seq[]), uses this technique:
+      // def min[B >: A](implicit cmp: Ordering[B]): A = {
+      //   if(isEmpty)
+      //     throw new UnsupportedOperationException("empty.min")
+
+      //   reduceLeft((x, y) => if (cmp.lteq(x, y)) x else y )
+      // }
+      List(1, 2, 3, 4).min must_== 1
+
+      List(1, 2, 3, 4).min(new Ordering[Int] { def compare(a: Int, b: Int) = b compare a } ) must_== 4
+
+      // There are views that translates Ordered into Ordering in the standard library
+      // trait LowPriorityOrderingImplicits {
+      //   implicit def ordered[A <: Ordered[A]]: Ordering[A] = new Odering[A] {
+      //       def compare(x: A, y: A) = x.compare(y)
+      //   }
+      // }
+    }
+    "Context bounds & implicitly[]" >> {
       true must_== true
     }
   }
