@@ -79,5 +79,42 @@ object AdvancedTypes extends org.specs2.mutable.Specification {
     "Context bounds & implicitly[]" >> {
       true must_== true
     }
+    "Higher-kinded types & ad-hoc polymorphism" >> {
+
+      trait Container[M[_]] {
+        def put[A](x: A): M[A]
+        def get[A](m: M[A]): A
+      }
+
+      val container = new Container[List] {
+        def put[A](x: A) = List(x)
+        def get[A](m: List[A]) = m.head
+      }
+
+      container.put("hey") must anInstanceOf[List[String]]
+
+      container.put(123) must anInstanceOf[List[Int]]
+
+      implicit val listContainer = new Container[List] {
+        def put[A] (x: A) = List(x)
+        def get[A] (m: List[A]) = m.head
+      }
+
+      implicit val optionContainer = new Container[Some] {
+        def put[A] (x: A) = Some(x)
+        def get[A] (m: Some[A]) = m.get
+      }
+
+      def tupleize[M[_]: Container, A, B](fst: M[A], snd: M[B]) = {
+        val c = implicitly[Container[M]]
+        c.put(c.get(fst), c.get(snd))
+      }
+
+      tupleize(Some(1), Some(2))
+      tupleize(List(1), List(2))
+
+      true must_== true
+
+    }
   }
 }
