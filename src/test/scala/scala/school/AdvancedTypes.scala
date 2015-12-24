@@ -116,5 +116,44 @@ object AdvancedTypes extends org.specs2.mutable.Specification {
       true must_== true
 
     }
+    "F-bounded polymorphism" >> {
+      // trait Container extends Ordered[Container]
+      trait Container[A <: Container[A]] extends Ordered[A]
+
+      class MyContainer extends Container[MyContainer] {
+        def compare(that: MyContainer) = 0
+      }
+
+      List(new MyContainer, new MyContainer, new MyContainer).min
+
+
+      true must_== true
+    }
+    "Structural types" >> {
+      def foo(x: { def get: Int }) = 123 + x.get
+
+      foo(new { def get = 10 }) must_== 133
+    }
+    "Abstract type members" >> {
+      trait Foo {
+        type A
+        val x: A
+        def getX: A = x
+      }
+
+      (new Foo{ type A = Int; val x = 10}).getX must_== 10
+      (new Foo{ type A = String; val x = "hello"}).getX must_== "hello"
+
+      trait Foo1[M[_]] { type t[A] = M[A] }
+      val x: Foo1[List]#t[Int] = List(1)
+
+      true must_== true
+    }
+    "Type erasures & manifests" >> {
+      true must_== true      
+    }
+    "Case study: Finagle" >> {
+      true must_== true      
+    }
   }
 }
