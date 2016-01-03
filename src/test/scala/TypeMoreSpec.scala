@@ -40,4 +40,21 @@ object TypeMore extends org.specs2.mutable.Specification {
     YieldingFor.filteredB must_== List("s t")
     YieldingFor.upcaseBs must_== List("D", "Y T", "DA", "S T", "G DA", "P W DO")
   }
+  "Enumeration" >> {
+    import ch3.Breed._
+    val bs = Breed.values
+    bs.size must_== 5
+    val bt = Breed.values filter (_.toString.endsWith("t"))
+    bt.size must_== 2
+
+    def isT(b: Breed) = b.toString.endsWith("t")
+
+    val bts = Breed.values filter isT
+    bts.size must_== 2
+
+    import ch3.WeekDay._
+    def isWorkingDay(d: WeekDay) = !(d == Sat || d == Sun)
+    val wd = WeekDay.values filter isWorkingDay
+    wd.size must_== 5
+  }
 }
