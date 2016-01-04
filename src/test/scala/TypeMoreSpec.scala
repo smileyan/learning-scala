@@ -57,4 +57,37 @@ object TypeMore extends org.specs2.mutable.Specification {
     val wd = WeekDay.values filter isWorkingDay
     wd.size must_== 5
   }
+  "interpolated string" >> {
+    val name = "world"
+    s"Hello, $name" must_== "Hello, world"
+    s"Hello, ${name}" must_== "Hello, world"
+
+    val gross = 100000F
+    val net = 64000F
+    val percent = net / gross * 100
+    f"$$${gross}%.2f vs. $$${net}%.2f or ${percent}%.1f" must_== "$100000.00 vs. $64000.00 or 64.0"
+
+    val i = 100
+    f"${i}%.2f" must_== "100.00"
+
+    val t = "%02d %s".format(5, "hello")
+    t must_== "05 hello"
+  }
+  "traits" >> {
+    val service = new ServiceImportant("really important")
+    val works = (1 to 3) map ( i => service.work(i))
+    works.size must_== 3
+
+    val logSe = new ServiceImportant("logs") with StdoutLogging {
+      override def work(i: Int): Int = {
+        info(s"s $i")
+        val res = super.work(i)
+        info(s"end $i and $res")
+        res
+      }
+    }
+    val workss = (1 to 3) map ( i => logSe.work(i))
+    workss.size must_== 3
+
+  }
 }
