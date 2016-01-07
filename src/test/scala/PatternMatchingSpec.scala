@@ -178,4 +178,57 @@ object PatternMatchingSpec extends org.specs2.mutable.Specification {
     }
     1 must_== 1
   }
+  "unapplySeq Method" >> {
+    val nonEmptyList = List(1,2,3,4,5)
+    val emptyList = Nil
+    val nonEmptyMap = Map("one" -> 1, "two" -> 2,"three" -> 3)
+
+    def windows[T](seq: Seq[T]): String = seq match {
+      case Seq(h1, h2, _*) =>
+        s"($h1,, $h2), " + windows(seq.tail)
+      case Seq(h, _*) =>
+        s"($h, _), " + windows(seq.tail)
+      case Nil => "Nil"
+    }
+
+    for( seq <- Seq(nonEmptyList, emptyList, nonEmptyMap.toSeq)) {
+      println(windows(seq))
+    }
+
+    1 must_== 1
+  }
+  "Matching on Variable Argument Lists" >> {
+
+    object Op extends Enumeration {
+      type Op = Value
+
+      val EQ = Value("=")
+      val NE = Value("!=")
+      val LT = Value("<")
+      val GT = Value(">")
+
+    }
+
+    import Op._
+
+    case class WhereOp[T](columnName: String, op: Op, value: T)
+    case class WhereIn[T](columnName: String, val1: T, vals: T*)
+
+    val wheres = Seq(
+      WhereIn("state", "IL", "CA", "VA"),
+      WhereOp("state", EQ, "IL")
+    )
+
+    for( where <- wheres) {
+      where match {
+        case WhereIn(col, val1, vals @ _*) => 
+          val valStr = (val1 +: vals).mkString(", ")
+          println(s"WHERE $col IN ($valStr)")
+        case WhereOp(col, op, value) => println(s"WHERE $col $op $value")
+        case _ => println(s"ERROR: Unknown expression: $where")
+      }
+      
+    }
+    1 must_== 1
+  }
 }
