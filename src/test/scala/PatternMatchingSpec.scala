@@ -231,4 +231,118 @@ object PatternMatchingSpec extends org.specs2.mutable.Specification {
     }
     1 must_== 1
   }
+  "Matching on regular Expressions" >> {
+
+    val BookExtractorRE = """Book: title=([^,]+),\s+author=(.+)""".r
+    val MagazineExtractorRE = """Magazine: title=([^,]+),\s+issue=(.+)""".r
+
+    val catalog = Seq(
+      "Book: title=scala, author=d",
+      "Magazine: title=t n y, issue=2014",
+      "unexpected"
+      )
+
+    for( item <- catalog) {
+      item match {
+        case BookExtractorRE(title, author) => println(s"$title $author")
+        case MagazineExtractorRE(title, author) => println(s"$title $author")
+        case entry => println(s"$entry")
+      }
+      
+    }
+
+    1 must_== 1
+  }
+  "More on Binding Variables in case Clauses" >> {
+    case class Address(street: String, city: String, country: String)
+    case class Person(name: String, age: Int, address: Address)
+
+    val alice = Person("Alice", 25, Address("1 s", "c", "USA"))
+    val bob = Person("Bob", 29, Address("2 j", "m", "USA"))
+    val charlie = Person("Charlie", 32, Address("3 p", "b", "USA"))
+
+    for( person <- Seq(alice, bob, charlie)) {
+      person match {
+        case p @ Person("Alice", 25, address) => println("Hi Alice!")
+        case p @ Person("Bob", 29, a @ Address("2 j", "m", "USA")) => println("Hi Bob!")
+        case p @ Person(name, age, _) => println(s"$age $name")
+      }
+    }
+
+
+    1 must_== 1
+  }
+  "More on Type Matching" >> {
+
+    def doSeqMatch[T](seq: Seq[T]): String = seq match {
+      case Nil => "Nil"
+      case head +: _ => head match {
+        case _ : Double => "double"
+        case _ : String => "String"
+        case _ => "unma"
+      }
+      
+    }
+
+    for( x <- Seq(List(5.5, 6.6, 7.7), List("a","b"))) yield {
+      x match {
+        case seq: Seq[_] => (s"seq ${doSeqMatch(seq)}", seq)
+        case _ => ("Unknown", x)
+      }
+      
+    }
+
+    1 must_== 1
+  }
+  "Sealed Hierarchies and Exhaustive Matches" >> {
+    sealed abstract class HttpMethod() {
+      def body: String
+      def bodyLength = body.length
+    }
+
+    case class Connect(body: String) extends HttpMethod
+    case class Delete (body: String) extends HttpMethod
+    case class Get    (body: String) extends HttpMethod
+    case class Head   (body: String) extends HttpMethod
+    case class Options(body: String) extends HttpMethod
+    case class Post   (body: String) extends HttpMethod
+    case class Put    (body: String) extends HttpMethod
+    case class Trace  (body: String) extends HttpMethod
+
+    def handle (method: HttpMethod) = method match {
+      case Connect (body) => s"Connect: (length: ${method.bodyLength}) $body"
+      case Delete (body) => s"Connect: (length: ${method.bodyLength}) $body"
+      case Get (body) => s"Connect: (length: ${method.bodyLength}) $body"
+      case Head (body) => s"Connect: (length: ${method.bodyLength}) $body"
+      case Options (body) => s"Connect: (length: ${method.bodyLength}) $body"
+      case Post (body) => s"Connect: (length: ${method.bodyLength}) $body"
+      case Put (body) => s"Connect: (length: ${method.bodyLength}) $body"
+      case Trace (body) => s"Connect: (length: ${method.bodyLength}) $body"
+    }
+    
+    val methods = Seq(
+      Connect("Connect"),
+      Delete("Delete"),
+      Get("get")
+      )
+    methods foreach (method => println(handle(method)))
+
+    1 must_== 1
+  }
+  "Other Uses of Pattern Matching" >> {
+    val h +: t = List(1,2,3)
+
+    h must_== 1
+
+    val h1 +: h2 +: t1 = Vector(1,2,3)
+    h1 must_== 1
+    h2 must_== 2
+
+    def sum_count(ints: Seq[Int]) = (ints.sum, ints.size)
+    val (s, c) = sum_count(List(1,2,3,4,5))
+    s must_== 15
+    c must_== 5
+
+    1 must_== 1
+  }
 }
