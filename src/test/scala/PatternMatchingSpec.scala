@@ -343,6 +343,44 @@ object PatternMatchingSpec extends org.specs2.mutable.Specification {
     s must_== 15
     c must_== 5
 
+    case class Address(street: String, city: String, country: String)
+    case class Person(name: String, age: Int)
+
+    val as = Seq(
+      Address("1", "a", "usa"),
+      Address("2", "b", "usa"))
+    val ps = Seq(
+      Person("a", 23),
+      Person("b", 24))
+
+    val pas = ps zip as
+
+    pas map {
+      case (Person(name, age), Address(s, c, country)) =>
+      s"$name"
+    }
+
+    val cols = """\*|[\w, ]*"""
+    val table = """\w+"""
+    val tail = """.*"""
+
+    val selectRE = s"""SELECT\\s*(DISTINCT)?\\s+($cols)\\s*FROM\\s+($table)\\s*($tail)?;""".r
+    val selectRE(d1, c1, ta1, t2) = "SELECT DISTINCT * FROM at1;"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     1 must_== 1
   }
 }
