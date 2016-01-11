@@ -39,6 +39,31 @@ object ImplicitsSpec extends org.specs2.mutable.Specification {
       val amount = 100F
       calTax(amount) must_== 6.0
     }
+    "Using implicitly" >> {
+      import math.Ordering
 
+      case class MyList[A](list: List[A]) {
+        def sortBy1[B](f: A => B)(implicit ord: Ordering[B]): List[A] = {
+          list.sortBy(f)(ord)
+        }
+
+        def sortBy2[B: Ordering](f: A => B) = {
+          list.sortBy(f)(implicitly[Ordering[B]])
+        }
+      } 
+
+      val l = MyList(List(3,2,1,4,5))
+
+      l sortBy1(i => -i) must_== List(5,4,3,2,1)
+      l sortBy2(i => -i) must_== List(5,4,3,2,1)
+    }
+  }
+  "Scenarios for implicit Arguments" >> {
+    "Execute context" >> {
+      // transaction thread pool, database connection, user session
+      // apply[T](body: => T)(implicit executor: ExecuteContext): Future
+      // import scala.concurrent.ExecuteContext.Implicits.global
+      1 must_== 1
+    }
   }
 }
