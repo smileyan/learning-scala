@@ -65,5 +65,15 @@ object ImplicitsSpec extends org.specs2.mutable.Specification {
       // import scala.concurrent.ExecuteContext.Implicits.global
       1 must_== 1
     }
+    "Capabilities" >> {
+      // def creatMenu(implicit session: Session): Menu = {
+      //   val defaultItems = List(helpItem, searchItem)
+      //   val accountItems =
+      //     if (session.loggedin()) List(viewAccountItem, editAccountItem)
+      //     else List(loginItem)
+      //   Menu(defaultItems ++ accountItems)
+      // }
+      1 must_== 1
+    }
   }
 }
