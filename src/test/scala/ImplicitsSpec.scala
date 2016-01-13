@@ -76,4 +76,17 @@ object ImplicitsSpec extends org.specs2.mutable.Specification {
       1 must_== 1
     }
   }
+  "Constraining Allowed Instances" >> {
+    import ch4.scaladb.implicits._
+    import ch4.javadb
+
+    val row = javadb.JRow("one" -> 1, "t" ->2.2, "th" -> "t")
+
+    val one: Int = row.get("one")
+
+    one must_== 1
+
+    1 must_== 1
+
+  }
 }
