@@ -85,8 +85,29 @@ object ImplicitsSpec extends org.specs2.mutable.Specification {
     val one: Int = row.get("one")
 
     one must_== 1
+  }
+  "Implicit Evidence" >> {
+    // trait TraversableOnce[+A] {
+    //   def toMap[T, U](implicit ev: <:<[A, (T, U)]): immutable.Map[T, U]
+    // }
+    val l2 = List("one" -> 1, "two" -> 2, "three" -> 3)
+    l2.toMap must_== Map("one" -> 1, "two" -> 2, "three" -> 3)
+  }
+  "Working Around Erasure" >> {
+    // object C {
+    //   def m(seq: Seq[Int]): Unit = println(s"Seq[Int]: $seq")
+    //   def m(seq: Seq[String]): Unit = println(s"Seq[String]: $seq")
+    // }
 
-    1 must_== 1
+    object M {
+      implicit object IntMarker
+      implicit object StringMarker
 
+      def m(seq: Seq[Int])(implicit i: IntMarker.type): String = s"Seq[Int]: $seq"
+      def m(seq: Seq[String])(implicit s: StringMarker.type): String = s"Seq[String]: $seq"
+    }
+    import M._
+    "Seq[Int]: List(1, 2, 3)" must_== m(List(1,2,3))
+    "Seq[String]: List(one, two, three)" must_== m(List("one", "two", "three"))
   }
 }
