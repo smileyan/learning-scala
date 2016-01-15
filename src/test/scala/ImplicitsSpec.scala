@@ -110,4 +110,16 @@ object ImplicitsSpec extends org.specs2.mutable.Specification {
     "Seq[Int]: List(1, 2, 3)" must_== m(List(1,2,3))
     "Seq[String]: List(one, two, three)" must_== m(List("one", "two", "three"))
   }
+  "Phantom type" >> {
+    import ch5._
+
+    val e = Employee("B T", 100000.0F, 0.25F, 200F, 0.10F, 0.05F)
+    val pay1 = Payroll start e
+    val pay2 = Payroll minus401K pay1
+    val pay3 = Payroll minusInsurance pay2
+    val pay4 = Payroll minusTax pay3
+    val pay  = Payroll minusFinalDeductions pay4
+
+    pay.netPay must_== 2446.1038F
+  }
 }
