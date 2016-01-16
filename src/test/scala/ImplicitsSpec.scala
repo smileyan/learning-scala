@@ -122,4 +122,22 @@ object ImplicitsSpec extends org.specs2.mutable.Specification {
 
     pay.netPay must_== 2446.1038F
   }
+  "pipeline" >> {
+    object Pipeline {
+      implicit class toPiped[V](value: V){
+        def |>[R] (f: V => R) = f(value)
+      }
+    }
+
+    import ch5._
+    import ch5.Payroll._
+    import Pipeline._
+    val e = Employee("B T", 100000.0F, 0.25F, 200F, 0.10F, 0.05F)
+    val pay = start(e)        |>
+        minus401K             |>
+        minusInsurance        |> 
+        minusTax              |>
+        minusFinalDeductions
+    pay.netPay must_== 2446.1038F
+  }
 }
