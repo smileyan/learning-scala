@@ -140,4 +140,12 @@ object ImplicitsSpec extends org.specs2.mutable.Specification {
         minusFinalDeductions
     pay.netPay must_== 2446.1038F
   }
+  "Implicit Conversions" >> {
+    // apply[A, B](elems: (A, B)*): Map[A, B]
+    // Predef
+    // implicit final class ArrowAssoc[A](val self: A) {
+    //   def ->[B](y: B): Tuple2[A, B] = Tuple2(self, y)
+    // }
+    1 must_== 1
+  }
 }
