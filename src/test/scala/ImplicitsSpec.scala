@@ -146,6 +146,33 @@ object ImplicitsSpec extends org.specs2.mutable.Specification {
     // implicit final class ArrowAssoc[A](val self: A) {
     //   def ->[B](y: B): Tuple2[A, B] = Tuple2(self, y)
     // }
-    1 must_== 1
+    val name =("Bu", "Tr")
+
+    s"h, ${name._1} ${name._2}" must_== "h, Bu Tr"
+    s"h, ${name._1} ${name._2}" must_== StringContext("h, ", " ", "").s(name._1, name._2)
+
+    import scala.util.parsing.json._
+
+    object Interpolators {
+      implicit class jsonForStringContext(val sc: StringContext) {
+        def json(values: Any*): JSONObject = {
+          val keyRE = """^[\s{,]*(\S+):\s*""".r
+          val keys = sc.parts map {
+            case keyRE(key) =>key
+            case str => str
+          }
+          val kvs = keys zip values
+          JSONObject(kvs.toMap)
+        }
+      }
+    }
+
+    import Interpolators._
+
+    val name1 = "De Wa"
+    val book = "Sc"
+
+    val jsonobj = json"{name: $name1, book: $book}"
+    jsonobj.obj("name") must_== "De Wa"
   }
 }
