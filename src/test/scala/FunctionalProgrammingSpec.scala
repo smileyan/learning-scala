@@ -72,4 +72,32 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
     hello("world!") must_== "Hello, world!"
 
   }
+  "Curring and Other Transformations on Functions" >> {
+    def cat2(s1: String) = (s2: String) => s1 + s2
+    val cat2Hello = cat2("Hello, ")
+    cat2Hello("world!") must_== "Hello, world!"
+
+    def cat3(s1: String, s2: String) = s1 + s2
+    cat3("hello", "w") must_== "hellow"
+
+    val cat3c = (cat3 _).curried
+    cat3c("h")("w") must_== "hw"
+
+
+    val f1: String => String => String = (s1: String) => (s2: String) => s1 + s2
+    val f2: String => (String => String) = (s1: String) => (s2: String) => s1 + s2
+
+    f1("h")("w") must_== f2("h")("w")
+
+    val cat3uc = Function.uncurried(cat3c)
+    cat3uc("h", "w") must_== "hw"
+  }
+
+
+
+
+
+
+
+
 }
