@@ -91,6 +91,24 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
 
     val cat3uc = Function.uncurried(cat3c)
     cat3uc("h", "w") must_== "hw"
+
+    val ff1 = Function.uncurried(f1)
+    ff1("h", "w") must_== "hw"
+
+    def multiplier(i: Int)(factor: Int): Int = i * factor
+    val byFive = multiplier(5) _
+    val byTen = multiplier(10) _
+
+    byFive(2) must_== 10
+    byTen(1) must_== 10
+
+    def mult(d1: Double, d2: Double, d3: Double) = d1 * d2 * d3
+    val d3 = (2.2, 3.3, 4.4)
+
+    mult(d3._1, d3._2, d3._3) must_== 31.944000000000003
+
+    val multTuple = Function.tupled(mult _)
+    multTuple(d3) must_== 31.944000000000003
   }
 
 
