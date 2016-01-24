@@ -17,21 +17,9 @@ public class RecursionTest {
         }
 
         public final String toString() {
-            String leftStr  = left  == null? "^" : left.toString();
-            String rightStr = right == null? "^" : right.toString();
+            String leftStr = left == null ? "^" : left.toString();
+            String rightStr = right == null ? "^" : right.toString();
             return "(" + leftStr + "-" + value + "-" + rightStr + ")";
         }
     }
-
-    public void walkATree() {
-        Tree root = new Tree(
-                new Tree(
-                        new Tree(null, 3, null), 2, new Tree(new Tree(null, 5, null), 4, null)),
-                1,
-                new Tree(
-                    new Tree(null, 7, null), 6, new Tree(null, 8, null)));
-
-        String expected = "";
-    }
-
 }

@@ -109,6 +109,28 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
 
     val multTuple = Function.tupled(mult _)
     multTuple(d3) must_== 31.944000000000003
+
+    val finicky: PartialFunction[String, String] = {
+      case "finiki" => "h"
+    }
+
+    finicky("finiki") must_== "h"
+
+    val finickyL = finicky.lift
+
+    finickyL("finiki").getOrElse("w") must_==("h")
+
+  }
+  "Functional Data Structure" >> {
+    val l1 = List("s", "p")
+    l1.head must_== "s"
+
+    val l2 = "h" :: "w" :: l1
+    l2.head must_== "h"
+
+    val seq1 = Seq("s", "p")
+    val seq2 = seq1 :+ "r"
+    seq2.head must_== "s"
   }
 
 
