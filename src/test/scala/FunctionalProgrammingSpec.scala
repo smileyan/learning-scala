@@ -131,6 +131,11 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
     val seq1 = Seq("s", "p")
     val seq2 = seq1 :+ "r"
     seq2.head must_== "s"
+
+    val v1 = Vector("p", "s")
+    val v2 = "pe" +: "sh" +: "re" +: v1
+    v2.head must_== "pe"
+    v2(1) must_== "sh"
   }
 
 

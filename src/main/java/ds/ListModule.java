@@ -1,10 +1,10 @@
 package ds;
 
 public class ListModule {
-  public static interface List<T> {
-    public abstract T       head();
-    public abstract List<T> tail();
-    public abstract boolean isEmpty();
+  public interface List<T> {
+      T       head();
+      List<T> tail();
+      boolean isEmpty();
   }
 
   public static final class NonEmptyList<T> implements List<T> {
@@ -44,4 +44,22 @@ public class ListModule {
   public static class EmptyListHasNoHead extends RuntimeException {}
   public static class EmptyListHasNoTail extends RuntimeException {}
 
+  public static final List<? extends Object> EMPTY = new List<Object>() {
+
+    public Object       head()    { throw new EmptyListHasNoHead(); }
+    public List<Object> tail()    { throw new EmptyListHasNoTail(); }
+    public boolean      isEmpty() { return  true; }
+
+    @Override
+    public String toString() { return "()"; }
+  };
+
+  @SuppressWarnings(value = "unckecked")
+  public static <T> List<T> emptyList() {
+    return (List<T>) EMPTY;
+  }
+
+  public static <T> List<T> list(T head, List<T> tail) {
+    return new NonEmptyList<T>(head, tail);
+  }
 }

@@ -34,4 +34,29 @@ public class NoneTest {
             assertEquals(expected[i], value);
         }
     }
+
+    @Test
+    public void hasNextWithGetUsesOnlyValuesForSomes() {
+        String[] expected = {"Dean", "Unkown!", "M"};
+
+        System.out.println("*** Using hasValue:");
+        for (int i = 0; i < names.size(); i++) {
+            Option<String> name = names.get(i);
+            if(name.hasValue()) {
+                String value = name.get();
+                System.out.println(name + ": " + value);
+                assertEquals(expected[i], value);
+            }
+        }
+    }
+
+    static Option<String> wrap(String s) {
+        if (s == null) {
+            return new None<String>();
+        } else {
+            return new Some<String>(s);
+        }
+    }
+
+
 }
