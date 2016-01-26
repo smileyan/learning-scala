@@ -137,7 +137,13 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
     v2.head must_== "pe"
     v2(1) must_== "sh"
   }
-
+  "Traversal" >> {
+    List(1,2,3) foreach { i => println(i) }
+    Map("a" -> "A", "b" -> "B") foreach { case (k, v) => println("k = " + k + ", v = " + v) }
+    val l = List("now", "is", "", "the", "time")
+    val fm = l flatMap(s => s.toList)
+    1 must_== 1
+  }
 
 
 
