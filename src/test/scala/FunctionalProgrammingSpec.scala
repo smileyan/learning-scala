@@ -142,7 +142,18 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
     Map("a" -> "A", "b" -> "B") foreach { case (k, v) => println("k = " + k + ", v = " + v) }
     val l = List("now", "is", "", "the", "time")
     val fm = l flatMap(s => s.toList)
-    1 must_== 1
+
+    val list = List(1,2,3,4,5,6)
+    list reduce (_+_) must_== 21
+    list.fold(10) (_*_) must_== 7200
+    (list fold 10) (_*_) must_== 7200
+    val fr = (List(1,2) foldRight List.empty[String]) {
+      (x, list) => ("[" + x + "]") :: list
+    }
+    fr must_== List("[1]", "[2]")
+
+    val sl = List(1,2,3,4,5)
+    (sl scan 10)(_+_) must_== List(10,11,13,16,20,25)
   }
 
 
