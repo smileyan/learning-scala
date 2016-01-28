@@ -154,6 +154,20 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
 
     val sl = List(1,2,3,4,5)
     (sl scan 10)(_+_) must_== List(10,11,13,16,20,25)
+
+    val fncLeft  = (accum: Int, x: Int) => accum - x
+    val fncRight = (x: Int, accum: Int) => accum - x
+
+    val list1 = List(1,2,3,4,5)
+
+    list1 reduceLeft  fncLeft  must_== -13
+    list1 reduceRight fncRight must_== -5
+
+    import scala.math.BigInt
+
+    lazy val fibs: Stream[BigInt] = BigInt(0) #:: BigInt(1) #:: fibs.zip(fibs.tail).map( n => n._1 + n._2)
+
+    fibs take 10 reduce (_ + _) must_== 88
   }
 
 
