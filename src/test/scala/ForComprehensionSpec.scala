@@ -43,4 +43,57 @@ object ForComprehensionSpec extends org.specs2.mutable.Specification {
     val sfm = states flatMap (_.toSeq withFilter (_.isLower) map (c => s"$c-${c.toUpper}"))
     sfm.head must_== "l-L"
   }
+  "translating for comprehension" >> {
+    val z @ (x, y) = (1, 2)
+    z must_== (1, 2)
+    x must_== 1
+    y must_== 2
+  }
+  "for options seq" >> {
+    val results: Seq[Option[Int]] = Vector(Some(10), None, Some(20))
+
+    // Translation step #1
+    val results2b = for {
+      Some(i) <- results withFilter {
+        case Some(i) => true
+        case None => false
+      }
+    } yield (2 * i)
+
+    val result2 = for {
+      Some(i) <- results
+    } yield (2 * i)
+
+    val results2c = results withFilter {
+      case Some(i) => true
+      case None    => false
+    } map {
+      case Some(i) => (2 * i)
+    }
+
+    result2 must_== Vector(20, 40)
+  }
+  "for options good" >> {
+    def positive(i: Int): Option[Int] =
+      if (i > 0) Some(i) else None
+
+    val result = for {
+      i1 <- positive(5)
+      i2 <- positive(10 * i1)
+      i3 <- positive(25 * i2)
+      i4 <- positive(2  * i3)
+    } yield (i1 + i2 + i3 + i4)
+
+    result.get must_== 3805
+
+    val result1 = for {
+      i1 <- positive(5)
+      i2 <- positive(-10 * i1)
+      i3 <- positive(25 * i2)
+      i4 <- positive(2  * i3)
+    } yield (i1 + i2 + i3 + i4)
+
+    result1 must_== None
+
+  }
 }
