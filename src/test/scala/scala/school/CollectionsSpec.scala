@@ -101,7 +101,7 @@ object CollectionsSpec extends org.specs2.mutable.Specification {
       result_3.get must_== "tell, don't ask"
     }
   }
-  "Functional Combinators" >> {
+  "Functional CombinatorsTest" >> {
     "map" >> {
       val numbers = List(1, 2, 3, 4)
 

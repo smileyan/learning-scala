@@ -36,52 +36,6 @@ public class HelloAkkaTest {
     }
 
     @Test
-    public void testStreamCollect() {
-        List<String> collected = Stream.of("a", "b", "c")
-                                       .collect(Collectors.toList());
-        Assert.assertEquals(Arrays.asList("a", "b", "c"), collected);
-    }
-
-    @Test
-    public void testForLoop() {
-        List<String> collected = new ArrayList<>();
-        for (String string: Arrays.asList("a", "b", "c")) {
-            String uppercaseString = string.toUpperCase();
-            collected.add(uppercaseString);
-        }
-
-        Assert.assertEquals(Arrays.asList("A", "B", "C"), collected);
-    }
-
-    @Test
-    public void testStreamMap() {
-        List<String> collected = Stream.of("a", "b", "c")
-                                       .map(string -> string.toUpperCase())
-                                       .collect(Collectors.toList());
-        Assert.assertEquals(Arrays.asList("A","B","C"), collected);
-    }
-
-    @Test
-    public void testIfLoop() {
-        List<String> beginningWithNumbers = new ArrayList<>();
-        for (String value : Arrays.asList("a", "1abc", "abc1")) {
-            if (Character.isDigit(value.charAt(0))) {
-                beginningWithNumbers.add(value);
-            }
-        }
-
-        Assert.assertEquals(Arrays.asList("1abc"), beginningWithNumbers);
-    }
-
-    @Test
-    public void testStreamFilter() {
-        List<String> beginningWithNumbers = Stream.of("a","1abc","abc1")
-                                                  .filter(value -> Character.isDigit(value.charAt(0)))
-                                                  .collect(Collectors.toList());
-        Assert.assertEquals(Arrays.asList("1abc"), beginningWithNumbers);
-    }
-
-    @Test
     public void testSetGreeter() {
         new JavaTestKit(system) {{
             final TestActorRef<HelloAkkaJava.Greeter> greeter =

@@ -96,4 +96,27 @@ object ForComprehensionSpec extends org.specs2.mutable.Specification {
     result1 must_== None
 
   }
+  "for-eighers-good" >> {
+    def positive(i: Int): Either[String, Int] =
+      if (i > 0) Right(i) else Left(s"nonpositive number $i")
+
+    val result = for {
+      i1 <- positive(5).right
+      i2 <- positive(10 * i1).right
+      i3 <- positive(25 * i2).right
+      i4 <- positive(2 * i3).right
+    } yield (i1 + i2 + i3 + i4)
+    result.right.get must_== 3805
+  }
+  "ref transparency" >> {
+    def addInts2(s1: String, s2: String): Either[NumberFormatException, Int]=
+      try {
+        Right(s1.toInt + s2.toInt)
+      } catch {
+        case nfe: NumberFormatException => Left(nfe)
+      }
+
+    addInts2("1", "2").right.get must_== 3
+
+  }
 }
