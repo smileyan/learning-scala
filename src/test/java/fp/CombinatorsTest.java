@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,9 +90,35 @@ public class CombinatorsTest {
 
     @Test
     public void testReduce() {
+        int count = Stream.of(1,2,3)
+                          .reduce(0, (acc, ele) -> acc + ele);
+        Assert.assertEquals(6, count);
+    }
+
+    @Test
+    public  void testBinaryOperator() {
+        BinaryOperator<Integer> accumulator = (acc, element) -> acc + element;
+        int count = accumulator.apply(
+                        accumulator.apply(
+                                accumulator.apply(0, 1),
+                        2),
+                    3);
+        Assert.assertEquals(6, count);
+    }
+
+    @Test
+    public void testImperativeImplOfSumming() {
+        int acc = 0;
+        for (Integer element: Arrays.asList(1,2,3)) {
+            acc = acc + element;
+        }
+        Assert.assertEquals(6, acc);
+    }
+//    @Test
+//    public void testReduce() {
 //        Object accumulator = initialValue;
 //        for (Object element: elements) {
 //            accumulator = combine(accumulator, element)
 //        }
-    }
+//    }
 }

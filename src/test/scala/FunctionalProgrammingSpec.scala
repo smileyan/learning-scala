@@ -169,11 +169,12 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
 
     fibs take 10 reduce (_ + _) must_== 88
   }
+  "type erasure" >> {
+    object C {
+      def m(seq: Seq[Int]): Unit = print(s"Seq[Int]: $seq")
+//      def m(seq: Seq[String]): Unit = print(s"Seq[String: $seq")
+    }
 
-
-
-
-
-
-
+    1 must_== 1
+  }
 }
