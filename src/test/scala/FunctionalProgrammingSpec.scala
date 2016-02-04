@@ -1,5 +1,6 @@
 package scala
 
+import ch7.{PhoneNumber, USPhoneNumber}
 import org.specs2._
 // import ch4._
 
@@ -176,5 +177,19 @@ object FunctionalProgrammingSpec extends org.specs2.mutable.Specification {
     }
 
     1 must_== 1
+  }
+  "value class" >> {
+    val benjamin = new ch7.Dollar(100)
+
+    benjamin.toString must_== "$100.00"
+
+    val number = new USPhoneNumber("987654-3210")
+
+    number.toString must_== "(987) 654-3210"
+
+    val r = new PhoneNumber("9870654321")
+
+    r.toString must_== "(987) 065-4321"
+
   }
 }
