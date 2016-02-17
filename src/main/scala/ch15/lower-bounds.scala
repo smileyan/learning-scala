@@ -7,5 +7,8 @@ class Parent(val value: Int) {
 
 class Child(value: Int) extends Parent(value)
 
-val op1: Option[Parent] = Option(new Child(1))
-val p1: Parent = op1.getOrElse(new Parent(10))
+class MyModule {
+  val op1: Option[Parent] = Option(new Child(1))
+  val p1: Parent = op1.getOrElse(new Parent(10))
+}
+
