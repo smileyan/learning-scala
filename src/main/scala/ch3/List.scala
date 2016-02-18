@@ -23,6 +23,31 @@ object List {
     if (as.isEmpty) Nil
     else Cons(as.head, apply(as.tail: _*))
 
+  def append[A](a1: List[A], a2: List[A]): List[A] =
+    a1 match {
+      case Nil => a2
+      case Cons(h, t) => Cons(h, append(t, a2))
+    }
+
+  def foldRight[A,B](as: List[A], z: B)(f: (A, B) => B): B =
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs,z)(f))
+    }
+
+  def sum2(ns: List[Int]) =
+    foldRight(ns, 0)((x,y) => x + y)
+
+  def product2(ns: List[Double]) =
+    foldRight(ns, 1.0)(_ * _)
+
+  def length[A](as: List[A]): Int =
+    foldRight(as, 0)((_,acc) => acc + 1)
+  //  as match {
+  //    case Nil => 0
+  //    case Cons(h,t) => 1 + length(t)
+  //  }
+
   def main(args: Array[String]) {
     val ex1: List[Double] = Nil
     val ex2: List[Int] = Cons(1, Nil)
