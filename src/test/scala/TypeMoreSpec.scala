@@ -1,7 +1,6 @@
 package scala.school
 
-import org.specs2._
-import ch3._
+import ch3.{ServiceImportant, Breed, YieldingFor, WeekDay, StdoutLogging}
 
 object TypeMore extends org.specs2.mutable.Specification {
   // "Semicolons"

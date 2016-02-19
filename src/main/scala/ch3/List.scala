@@ -42,11 +42,10 @@ object List {
     foldRight(ns, 1.0)(_ * _)
 
   def length[A](as: List[A]): Int =
-    foldRight(as, 0)((_,acc) => acc + 1)
-  //  as match {
-  //    case Nil => 0
-  //    case Cons(h,t) => 1 + length(t)
-  //  }
+    as match {
+      case Nil => 0
+      case Cons(h,t) => 1 + length(t)
+    }
 
   def main(args: Array[String]) {
     val ex1: List[Double] = Nil
