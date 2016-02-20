@@ -9,5 +9,5 @@ object Exercise11 {
     foldLeft(as, 0)(_ + _)
 
   def product(as: List[Double]): Double =
-    foldLeft(as, 0.)(_ * _)
+    foldLeft(as, 0.0)(_ * _)
 }
