@@ -21,9 +21,17 @@ object MyModule {
 
   def maybeTwice(b: Boolean, i: => Int) = if (b) i+i else 0
 
+  def maybeTwice2(b: Boolean, i: => Int): Int = {
+    lazy val j = i
+    if (b) j + j else 0
+  }
+
+
   def main(args: Array[String]) {
     if2(11 < 22, () => println("a"), () => println("b"))
 
-    val x = maybeTwice(true, { println("1"); 1 + 41})
+    val x = maybeTwice(true, { println("1"); 1 + 41 })
+
+    val y = maybeTwice2(true, { println("1"); 1 + 41 })
   }
 }
