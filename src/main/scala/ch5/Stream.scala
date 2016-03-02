@@ -67,6 +67,20 @@ sealed trait Stream[+A] {
 
   def find(p: A => Boolean): Option[A] =
     filter(p).headOption
+
+  def map_unfold[B](f: A => B): Stream[B] =
+    unfold(this) {
+      case Cons(h,t) => Some((f(h()), t()))
+      case _ => None
+    }
+
+  def take_unfold(n: Int): Stream[A] =
+    unfold((this,n)) {
+      case (Cons(h,t), 1) => Some((h(), (empty, 0)))
+      case (Cons(h,t), n) if n > 1 => Some((h(), (t(), n-1)))
+      case _ => None
+    }
+
 }
 case object Empty extends Stream[Nothing]
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A]
@@ -111,4 +125,15 @@ object Stream {
       case Some((h, s)) => cons(h, unfold(s)(f))
       case None => empty
     }
+
+  val fibs_unflod: Stream[Int] =
+    unfold((0, 1)){ case (curr, next) => Some(curr, (next,curr + next)) }
+
+  def from_unfold(n: Int) =
+    unfold(n)(n => Some((n,n+1)))
+
+  def constant_unfold[A](a: A) =
+    unfold(a)(_ => Some((a,a)))
+
+  val ones_unfold = unfold(1)(_ => Some((1,1)))
 }
