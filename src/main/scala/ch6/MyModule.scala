@@ -12,3 +12,9 @@ class MyModule {
     var n1 = rng.nextDouble()
   }
 }
+
+class Foo {
+  private var s: String = ???
+  def bar: String = ???
+  def baz: Int = ???
+}
