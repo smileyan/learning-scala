@@ -14,6 +14,9 @@ case class SimpleRNG(seed: Long) extends RNG {
     val n = (newSeed >>> 16).toInt
     (n, nextRNG)
   }
+}
+
+object RNG {
 
   def randomPair(rng: RNG): ((Int, Int), RNG) = {
     val (i1, rng2) = rng.nextInt
@@ -32,7 +35,7 @@ case class SimpleRNG(seed: Long) extends RNG {
   }
 
   def intDouble(rng: RNG): ((Int,Double), RNG) = {
-    val (i, r1) = nextInt
+    val (i, r1) = rng.nextInt
     val (d, r2) = double(r1)
     ((i,d),r2)
   }
@@ -58,4 +61,23 @@ case class SimpleRNG(seed: Long) extends RNG {
       (n::xs, r2)
     }
   }
+
+  type Rand[+A] = RNG => (A, RNG)
+
+  val int: Rand[Int] = _.nextInt
+
+  def unit[A](a: A): Rand[A] =
+    rng => (a, rng)
+
+  def map[A,B](s: Rand[A])(f: A => B): Rand[B] =
+    rng => {
+      val (a, r1) = s(rng)
+      (f(a), r1)
+    }
+
+  def nonNegativeEven: Rand[Int] =
+    map(nonNegativeInt)(i => i - i%2)
+
+  def double_c: Rand[Double] =
+    map(nonNegativeInt)(i => i / (Int.MaxValue.toDouble + 1))
 }
