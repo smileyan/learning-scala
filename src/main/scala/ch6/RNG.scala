@@ -97,3 +97,21 @@ object RNG {
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
     fs.foldRight(unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
 }
+
+import State._
+
+case class State[S,+A](run: S => (A,S)) {
+  def map[B](f: A => B): State[S, B] =
+    flatMap(a => unit(f(a)))
+
+  def flatMap[B](f: A => State[S, B]) =
+    State(s => {
+      val (a,s1) = run(s)
+      f(a).run(s1)
+    })
+}
+
+object State {
+  def unit[S, A](a: A) : State[S, A] =
+    State(s => (a,s))
+}
