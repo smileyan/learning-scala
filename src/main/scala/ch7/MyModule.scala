@@ -1,5 +1,7 @@
 package ch7
 
+import java.util.concurrent.Executors
+
 import ch7.Par.Par
 
 /**
@@ -40,4 +42,10 @@ object MyModule {
       val (l,r) = ints.splitAt(ints.length/2)
       Par.map2(Par.fork(sum_3(l)), Par.fork(sum_3(r)))(_ + _)
     }
+
+  def main(args: Array[String]) {
+    val r: Par[Int] = sum_3(IndexedSeq(1,2,3,4,5,6,7,8,9,1,1,1))
+    System.out.println("##########################################################")
+    System.out.println(Par.run(Executors.newFixedThreadPool(19))(r).get())
+  }
 }
