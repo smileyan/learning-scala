@@ -24,6 +24,9 @@ object Par {
 
   // Combines the results of two parallel computations with a
   // binary function.
+  // It simply passes the ExecutorService on to both Par values,
+  // waits for the results of the futures af and bf, applies f to
+  // them, and wraps them in a UnitFuture.
   def map2[A,B,C](a: Par[A], b: Par[B])(f: (A,B) => C): Par[C] =
     (es: ExecutorService) => {
       val af = a(es)
@@ -66,4 +69,16 @@ object Par {
     val fbs: List[Par[B]] = ps.map(asyncF(f))
     sequence(fbs)
   }
+
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = {
+    val pars: List[Par[List[A]]] =
+      as map asyncF((a: A) => if (f(a))
+                                 List(a)
+                               else
+                                 List())
+    map(sequence(pars))(_.flatten) // convenience method on `List` for concatenating a list of lists
+  }
+
+  def delay[A](fa: => Par[A]): Par[A] =
+    es => fa(es)
 }
