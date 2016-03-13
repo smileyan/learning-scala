@@ -1,6 +1,6 @@
 package ch7
 
-import java.util.concurrent.{CountDownLatch, ExecutorService}
+import java.util.concurrent.{Callable, CountDownLatch, ExecutorService}
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -11,7 +11,7 @@ object Nonblocking {
     def apply(k: A => Unit): Unit
   }
 
-  type Par[+A] = ExecutorService => Future[A]
+  type Par[A] = ExecutorService => Future[A]
 
   object Par {
     def run[A](es: ExecutorService)(p: Par[A]): A = {
@@ -26,5 +26,14 @@ object Nonblocking {
         def apply(cb: A => Unit): Unit = cb(a)
       }
     }
+
+    def fork[A](a: => Par[A]): Par[A] =
+      es => new Future[A] {
+        def apply(cb: A => Unit): Unit =
+          eval(es)(a(es) (cb))
+      }
+
+    def eval(es: ExecutorService)(r: => Unit): Unit =
+      es.submit(new Callable[Unit] { def call = r})
   }
 }
