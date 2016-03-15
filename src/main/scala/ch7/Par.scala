@@ -81,4 +81,6 @@ object Par {
 
   def delay[A](fa: => Par[A]): Par[A] =
     es => fa(es)
+
+  def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] = ???
 }
