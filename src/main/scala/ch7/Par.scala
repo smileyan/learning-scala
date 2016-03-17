@@ -101,4 +101,22 @@ object Par {
       val k = run(es)(key).get()
       run(es)(choices(k))
     }
+
+  // it's a parallel computation that, when run, will run an
+  // an initial computation whose result is used to determi-
+  // ne a second computation
+  def chooser[A,B](p: Par[A])(choices: A => Par[B]): Par[B] =
+    es => {
+      val k = run(es)(p).get()
+      run(es)(choices(k))
+    }
+
+  def flatMap[A,B](a: Par[A])(f: A => Par[B]): Par[B] =
+    es => {
+      val k = run(es)(a).get
+      run(es)(f(k))
+    }
+
+  def join[A](a: Par[Par[A]]): Par[A] =
+    es => run(es)(run(es)(a).get())
 }
