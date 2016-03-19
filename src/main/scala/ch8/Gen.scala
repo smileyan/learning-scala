@@ -15,7 +15,16 @@ case class Gen[+A](sample: State[RNG, A]) {
 
 }
 
-trait Prop { def &&(p: Prop): Prop }
+trait Prop {
+  // for running a property
+  def check: Unit
+
+  // for composing properties
+  def &&(p: Prop): Prop = new Prop {
+    // for running a property
+    override def check: Unit = Prop.this.check && p.check
+  }
+}
 
 object Gen {
 
