@@ -2,6 +2,7 @@ package ch8
 
 import ch6.RNG
 import ch6.State
+import ch8.Prop.{SuccessCount, FailedCase}
 
 /**
   * Created by huay on 18/03/2016.
@@ -17,15 +18,19 @@ case class Gen[+A](sample: State[RNG, A]) {
 
 trait Prop {
   // for running a property
-  def check: Unit
+  def check: Either[(FailedCase, SuccessCount), SuccessCount]
 
   // for composing properties
-  def &&(p: Prop): Prop = new Prop {
+  //def &&(p: Prop): Prop = new Prop {
     // for running a property
-    override def check: Unit = Prop.this.check && p.check
-  }
+  //  override def check = Prop.this.check && p.check
+  //}
 }
 
+object Prop {
+  type FailedCase = String
+  type SuccessCount = Int
+}
 object Gen {
 
 }
