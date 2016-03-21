@@ -14,6 +14,8 @@ case class Gen[+A](sample: State[RNG, A]) {
 
   def forAll[A](a: Gen[A])(f: A => Boolean): Prop = ???
 
+  def choose(start: Int, stopExclusive: Int): Gen[Int] =
+    Gen(State(RNG.nonNegativeInt).map(n => start + n % (stopExclusive-start)))
 }
 
 trait Prop {
