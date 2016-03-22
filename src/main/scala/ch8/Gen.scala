@@ -10,12 +10,21 @@ import ch8.Prop.{SuccessCount, FailedCase}
 case class Gen[+A](sample: State[RNG, A]) {
   def listOf[A](a: Gen[A]): Gen[List[A]] = ???
 
-  def listOfN[A](n: Int, a: Gen[A]): Gen[List[A]] = ???
+  def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] =
+    Gen(State.sequence(List.fill(n)(g.sample)))
 
   def forAll[A](a: Gen[A])(f: A => Boolean): Prop = ???
 
   def choose(start: Int, stopExclusive: Int): Gen[Int] =
     Gen(State(RNG.nonNegativeInt).map(n => start + n % (stopExclusive-start)))
+
+  def unit[A](a: => A): Gen[A] =
+    Gen(State.unit(a))
+
+  def boolean: Gen[Boolean] =
+    Gen(State(RNG.boolean))
+
+
 }
 
 trait Prop {

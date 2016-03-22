@@ -96,6 +96,11 @@ object RNG {
 
   def sequence[A](fs: List[Rand[A]]): Rand[List[A]] =
     fs.foldRight(unit(List[A]()))((f, acc) => map2(f, acc)(_ :: _))
+
+  def boolean(rng: RNG): (Boolean, RNG) =
+    rng.nextInt match { case (i, rng2) => (i%2==0, rng2) }
+
+
 }
 
 import State._
@@ -109,6 +114,15 @@ case class State[S,+A](run: S => (A,S)) {
       val (a,s1) = run(s)
       f(a).run(s1)
     })
+
+  def sequence[S, A](sas: List[State[S, A]]): State[S, List[A]] = {
+    def go(s: S, actions: List[State[S,A]], acc: List[A]): (List[A],S) =
+      actions match {
+        case Nil => (acc.reverse,s)
+        case h :: t => h.run(s) match { case (a,s2) => go(s2, t, a :: acc) }
+      }
+    State((s: S) => go(s,sas,List()))
+  }
 }
 
 object State {
