@@ -115,6 +115,13 @@ case class State[S,+A](run: S => (A,S)) {
       f(a).run(s1)
     })
 
+
+}
+
+object State {
+  def unit[S, A](a: A) : State[S, A] =
+    State(s => (a,s))
+
   def sequence[S, A](sas: List[State[S, A]]): State[S, List[A]] = {
     def go(s: S, actions: List[State[S,A]], acc: List[A]): (List[A],S) =
       actions match {
@@ -123,9 +130,4 @@ case class State[S,+A](run: S => (A,S)) {
       }
     State((s: S) => go(s,sas,List()))
   }
-}
-
-object State {
-  def unit[S, A](a: A) : State[S, A] =
-    State(s => (a,s))
 }
