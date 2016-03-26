@@ -2,7 +2,7 @@ package ch8
 
 import ch6.RNG
 import ch6.State
-import ch8.Prop.{SuccessCount, FailedCase}
+import ch8.Prop.{Result, TestCases, SuccessCount, FailedCase}
 
 /**
   * Created by huay on 18/03/2016.
@@ -42,21 +42,25 @@ case class Gen[+A](sample: State[RNG, A]) {
   }
 }
 
-trait Prop {
+//trait Prop {
   // for running a property
-  def check: Either[(FailedCase, SuccessCount), SuccessCount]
+  //def check: Either[(FailedCase, SuccessCount), SuccessCount]
 
   // for composing properties
   //def &&(p: Prop): Prop = new Prop {
     // for running a property
   //  override def check = Prop.this.check && p.check
   //}
-}
+//}
 
 object Prop {
+  type TestCases = Int
+  type Result = Either[(FailedCase, SuccessCount), SuccessCount]
   type FailedCase = String
   type SuccessCount = Int
 }
+
+case class Prop(run: TestCases => Result)
 object Gen {
 
 }
