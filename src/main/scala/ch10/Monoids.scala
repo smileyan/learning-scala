@@ -61,4 +61,12 @@ object Monoid {
 
   def firstOptionMonoid[A]: Monoid[Option[A]] = optionMonoid[A]
   def lastOptionMonoid[A]: Monoid[Option[A]] = dual(optionMonoid[A])
+
+  def endoMonoid[A]: Monoid[A => A] = new Monoid[(A) => A] {
+    // op(op(x,y),z) == op(x,op(y,z))
+    override def op(a1: (A) => A, a2: (A) => A): (A) => A = a1 andThen(a2)
+
+    // op(zero,x) == op(x,zero)
+    override def zero: (A) => A = (a: A) => a
+  }
 }
