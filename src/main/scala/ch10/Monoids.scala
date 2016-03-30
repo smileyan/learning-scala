@@ -69,4 +69,18 @@ object Monoid {
     // op(zero,x) == op(x,zero)
     override def zero: (A) => A = (a: A) => a
   }
+
+  // def foldRight[B](z: B)(f: (A,B) => B): B
+  // def foldLeft[B](z: B)(f: (B,A) => B): B
+  val words = List("a","b","c")
+  val s = words.foldRight(stringMonoid.zero)(stringMonoid.op)
+  val t = words.foldLeft(stringMonoid.zero)(stringMonoid.op)
+
+  def concatenate[A](as: List[A], m: Monoid[A]): A =
+    as.foldLeft(m.zero)(m.op)
+
+  def foldMap[A,B](as: List[A], m: Monoid[B])(f: A => B): B =
+    //as.map(f).foldLeft(m.zero)(m.op)
+    as.foldLeft(m.zero)((b,a) => m.op(b, f(a)))
+
 }
