@@ -83,4 +83,7 @@ object Monoid {
     //as.map(f).foldLeft(m.zero)(m.op)
     as.foldLeft(m.zero)((b,a) => m.op(b, f(a)))
 
+  // op(a, op(b, op(c,d)))
+  // op(op(op(a,b),c),d)
+  // op(op(a,b),op(c,d))
 }
