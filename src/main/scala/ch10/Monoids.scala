@@ -94,7 +94,7 @@ object Monoid {
       f(as(0))
     } else {
       val (l, r) = as.splitAt(as.length / 2)
-      m.op(foldMapV(l, m)(f), foldMapV(r, m)(f)))
+      m.op(foldMapV(l, m)(f), foldMapV(r, m)(f))
     }
   }
 }
