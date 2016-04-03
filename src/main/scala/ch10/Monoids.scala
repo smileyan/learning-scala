@@ -97,4 +97,8 @@ object Monoid {
       m.op(foldMapV(l, m)(f), foldMapV(r, m)(f))
     }
   }
+  sealed trait WC
+  case class Stub(chars: String) extends WC
+  case class Part(lStub: String, words: Int, rStub: String) extends WC
+
 }
