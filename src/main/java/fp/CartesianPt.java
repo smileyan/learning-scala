@@ -11,4 +11,7 @@ public class CartesianPt extends Point{
         x = _x;
         y = _y;
     }
+    int distanceToO() {
+        return (int) Math.sqrt(x*x + y * y);
+    }
 }

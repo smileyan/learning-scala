@@ -2,6 +2,8 @@ package ds;
 
 import org.junit.Test;
 
+import java.util.Collection;
+
 import static ds.ListModule.*;
 /**
  * Created by huay on 24/01/2016.
@@ -21,5 +23,15 @@ public class ListTest {
         EMPTYLS.tail();
     }
 
-
+//    static void fromArrayToColletion(Object[] a, Collection<?> c) {
+//        for (Object o: a) {
+//            c.add(o);
+//        }
+//
+//    }
+    static <T> void fromArrayToCollection(T[] a, Collection<T> c) {
+        for (T o: a) {
+            c.add(o);
+        }
+    }
 }

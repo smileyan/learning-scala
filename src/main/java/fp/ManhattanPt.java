@@ -11,4 +11,9 @@ public class ManhattanPt extends Point{
         x = _x;
         y = _y;
     }
+
+    @Override
+    int distanceToO() {
+        return x + y;
+    }
 }
