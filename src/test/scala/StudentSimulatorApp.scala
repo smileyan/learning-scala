@@ -1,4 +1,4 @@
-import _root_.TeacherProtocal.{QuoteResponse, QuoteRequest}
+import TeacherProtocal.{QuoteResponse, QuoteRequest}
 import akka.actor.{Props, ActorSystem, Actor}
 
 /**
