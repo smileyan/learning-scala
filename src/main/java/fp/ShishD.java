@@ -4,6 +4,7 @@ package fp;
  * Created by huay on 12/04/2016.
  */
 abstract class ShishD {
+    OnlyOnionsV ooFn = new OnlyOnionsV();
     abstract boolean onlyOnions();
     abstract boolean isVegetarian();
 }
@@ -11,7 +12,7 @@ abstract class ShishD {
 class Skewer extends ShishD {
     @Override
     boolean onlyOnions() {
-        return true;
+        return ooFn.forSkewer();
     }
 
     @Override
@@ -28,7 +29,7 @@ class Onion extends ShishD {
 
     @Override
     boolean onlyOnions() {
-        return s.onlyOnions();
+        return ooFn.forOnion(s);
     }
 
     @Override
@@ -45,7 +46,7 @@ class Lamb extends  ShishD {
 
     @Override
     boolean onlyOnions() {
-        return false;
+        return ooFn.forLamb(s);
     }
 
     @Override
@@ -62,12 +63,30 @@ class Tomato extends ShishD{
 
     @Override
     boolean onlyOnions() {
-        return false;
+        return ooFn.forTomato(s);
     }
 
     @Override
     boolean isVegetarian() {
         return s.isVegetarian();
+    }
+}
+
+class OnlyOnionsV {
+    boolean forSkewer() {
+        return true;
+    }
+
+    boolean forOnion(ShishD s) {
+        return s.onlyOnions();
+    }
+
+    boolean forLamb(ShishD s) {
+        return false;
+    }
+
+    boolean forTomato(ShishD s) {
+        return false;
     }
 }
 

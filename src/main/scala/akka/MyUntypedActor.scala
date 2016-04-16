@@ -2,7 +2,7 @@ package akka
 
 import akka.actor.{Props, ActorSystem, Actor}
 
-import TeachProtocal.QuoteRequest
+import TeacherProtocal.QuoteRequest
 
 /**
   * Created by huay on 14/04/2016.
@@ -10,7 +10,7 @@ import TeachProtocal.QuoteRequest
 object StudentSimulatorApp {
   val actorSystem = ActorSystem("UniversityMessageSystem")
 
-  val teacherActorRef = actorSystem.actorOf(Props[TeacherActor])
+  val teacherActorRef = actorSystem.actorOf(Props[TeachActor])
 
   teacherActorRef!QuoteRequest
 
@@ -19,7 +19,7 @@ object StudentSimulatorApp {
   actorSystem.shutdown()
 }
 
-object TeachProtocal {
+object TeacherProtocal {
   case class QuoteRequest()
   case class QuoteResponse(quoteString:String)
 }
