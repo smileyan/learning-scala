@@ -1,6 +1,6 @@
 package akka
 
-import akka.actor.{Props, ActorSystem. Actor}
+import akka.actor.{Props, ActorSystem, Actor}
 
 import TeachProtocal.QuoteRequest
 
