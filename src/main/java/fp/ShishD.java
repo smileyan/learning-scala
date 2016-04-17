@@ -5,6 +5,7 @@ package fp;
  */
 abstract class ShishD {
     OnlyOnionsV ooFn = new OnlyOnionsV();
+    IsVegetarianV ivFn = new IsVegetarianV();
     abstract boolean onlyOnions();
     abstract boolean isVegetarian();
 }
@@ -17,7 +18,7 @@ class Skewer extends ShishD {
 
     @Override
     boolean isVegetarian() {
-        return true;
+        return ivFn.forSkewer();
     }
 }
 
@@ -34,7 +35,7 @@ class Onion extends ShishD {
 
     @Override
     boolean isVegetarian() {
-        return s.isVegetarian();
+        return ivFn.forOnion(s);
     }
 }
 
@@ -51,7 +52,7 @@ class Lamb extends  ShishD {
 
     @Override
     boolean isVegetarian() {
-        return false;
+        return ivFn.forLamb(s);
     }
 }
 
@@ -68,6 +69,24 @@ class Tomato extends ShishD{
 
     @Override
     boolean isVegetarian() {
+        return ivFn.forTomato(s);
+    }
+}
+
+class IsVegetarianV {
+    boolean forSkewer() {
+        return true;
+    }
+
+    boolean forOnion(ShishD s) {
+        return s.isVegetarian();
+    }
+
+    boolean forLamb(ShishD s) {
+        return false;
+    }
+
+    boolean forTomato(ShishD s) {
         return s.isVegetarian();
     }
 }
