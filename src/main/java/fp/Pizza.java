@@ -4,9 +4,79 @@ package fp;
  * Created by huay on 14/04/2016.
  */
 abstract class Pizza {
+    RemAV remFn = new RemAV();
+    TopAwCV topFn = new TopAwCV();
+    SubAbCV subFn = new SubAbCV();
+
     abstract Pizza remA();
     abstract Pizza topAwC();
     abstract Pizza subAbC();
+}
+
+class RemAV {
+    Pizza forCrust() {
+        return null;
+    }
+
+    Pizza forOlive(Pizza p) {
+        return null;
+    }
+
+    Pizza forCheese(Pizza p) {
+        return null;
+    }
+
+    Pizza forAnchovy(Pizza p) {
+        return null;
+    }
+
+    Pizza forSausage(Pizza p) {
+        return null;
+    }
+}
+
+class TopAwCV {
+    Pizza forCrust() {
+        return null;
+    }
+
+    Pizza forOlive(Pizza p) {
+        return null;
+    }
+
+    Pizza forCheese(Pizza p) {
+        return null;
+    }
+
+    Pizza forAnchovy(Pizza p) {
+        return null;
+    }
+
+    Pizza forSausage(Pizza p) {
+        return null;
+    }
+}
+
+class SubAbCV {
+    Pizza forCrust() {
+        return null;
+    }
+
+    Pizza forOlive(Pizza p) {
+        return null;
+    }
+
+    Pizza forCheese(Pizza p) {
+        return null;
+    }
+
+    Pizza forAnchovy(Pizza p) {
+        return null;
+    }
+
+    Pizza forSausage(Pizza p) {
+        return null;
+    }
 }
 
 class Crust extends Pizza {
