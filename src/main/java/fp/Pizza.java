@@ -14,6 +14,16 @@ abstract class Pizza {
 }
 
 class RemAV {
+    PieD forBot() {
+        return new Bot();
+    }
+
+    PieD forTop(Object t, PieD r) {
+        if (new Anchovyv().equals(t))
+            return r.remA();
+        else
+            return new Top(t,r.remA());
+    }
     Pizza forCrust() {
         return null;
     }
