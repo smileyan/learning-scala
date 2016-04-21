@@ -4,21 +4,28 @@ package fp;
  * Created by huay on 19/04/2016.
  */
 abstract class PieD {
-    RemAV raFn = new RemAV();
-    RemFishV rfFn = new RemFishV();
-    abstract PieD remA();
-    abstract PieD remFish(FishD f);
+//    RemAV raFn = new RemAV();
+//    RemFishV rfFn = new RemFishV();
+//    abstract PieD remA();
+//    abstract PieD remFish(FishD f);
+    RemV remFn = new RemV();
+    abstract PieD rem(Object o);
 }
 
 class Bot extends PieD {
-    @Override
-    PieD remA() {
-        return raFn.forBot();
-    }
+//    @Override
+//    PieD remA() {
+//        return raFn.forBot();
+//    }
+//
+//    @Override
+//    PieD remFish(FishD f) {
+//        return rfFn.forBot(f);
+//    }
 
     @Override
-    PieD remFish(FishD f) {
-        return rfFn.forBot(f);
+    PieD rem(Object o) {
+        return remFn.forBot(o);
     }
 }
 
@@ -30,14 +37,19 @@ class Top extends PieD {
         r = _r;
     }
 
-    @Override
-    PieD remA() {
-        return raFn.forTop(t,r);
-    }
+//    @Override
+//    PieD remA() {
+//        return raFn.forTop(t,r);
+//    }
+//
+//    @Override
+//    PieD remFish(FishD f) {
+//        return rfFn.forTop(t,r,f);
+//    }
 
     @Override
-    PieD remFish(FishD f) {
-        return rfFn.forTop(t,r,f);
+    PieD rem(Object o) {
+        return remFn.forTop(t,r,o);
     }
 }
 
@@ -64,15 +76,41 @@ class Tuna     extends FishD {
     }
 }
 
-class RemFishV {
-    PieD forBot(FishD f) {
+class RemV {
+    PieD forBot(Object o) {
         return new Bot();
     }
 
-    PieD forTop(Object t, PieD r, FishD f) {
-        if(f.equals(t))
-            return r.remFish(f);
+    PieD forTop(Object t, PieD r, Object o) {
+        if (o.equals(t))
+            return r.rem(o);
         else
-            return new Top(t, r.remFish(f));
+            return new Top(t,r.rem(o));
     }
 }
+//
+//class RemIntV {
+//    PieD forBot(Integer i) {
+//        return new Bot();
+//    }
+//
+//    PieD forTop(Object t, PieD r, Integer i) {
+//        if (i.equals(t))
+//            return r.remInt(i);
+//        else
+//            return new Top(t,r.remInt(i));
+//    }
+//}
+//
+//class RemFishV {
+//    PieD forBot(FishD f) {
+//        return new Bot();
+//    }
+//
+//    PieD forTop(Object t, PieD r, FishD f) {
+//        if(f.equals(t))
+//            return r.remFish(f);
+//        else
+//            return new Top(t, r.remFish(f));
+//    }
+//}
