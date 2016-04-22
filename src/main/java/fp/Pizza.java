@@ -20,9 +20,9 @@ class RemAV {
 
     PieD forTop(Object t, PieD r) {
         if (new Anchovyv().equals(t))
-            return r.remA();
+            return r.rem(t);
         else
-            return new Top(t,r.remA());
+            return new Top(t,r.rem(t));
     }
     Pizza forCrust() {
         return null;
