@@ -1,5 +1,7 @@
 package ds;
 
+import org.apache.hadoop.conf.Configuration;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.Collection;
@@ -33,5 +35,14 @@ public class ListTest {
         for (T o: a) {
             c.add(o);
         }
+    }
+
+    @Test
+    public void testConfiguration() {
+        Configuration conf = new Configuration();
+        conf.addResource("configuration-1.xml");
+
+        Assert.assertEquals(conf.getInt("size", 10), 12);
+
     }
 }
