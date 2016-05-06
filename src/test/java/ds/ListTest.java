@@ -42,7 +42,7 @@ public class ListTest {
         Configuration conf = new Configuration();
         conf.addResource("configuration-1.xml");
 
-        Assert.assertEquals(conf.getInt("size", 10), 12);
+        Assert.assertEquals(conf.getInt("size", 10), 10);
 
     }
 }
