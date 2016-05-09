@@ -26,6 +26,7 @@ lazy val root = (project in file(".")).
 
     libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.2",
 //    libraryDependencies += "org.apache.mrunit" % "mrunit" % "1.1.0",
+    libraryDependencies += "org.json" % "json" % "20160212",
 
     scalacOptions in Test ++= Seq("-Yrangepos")
   )
