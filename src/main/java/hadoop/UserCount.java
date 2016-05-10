@@ -18,29 +18,42 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-//import java.util.Random;
-//import java.util.Iterator;
-//import java.util.StringTokenizer;
-//import java.util.ArrayList;
-//import org.json.*;
-//import org.apache.hadoop.fs.FileSystem;
-//import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-//import org.apache.hadoop.util.GenericOptionsParser;
 
+class KeyAndValue<K,V> {
+    private K k;
+    private V v;
 
+    public KeyAndValue(K k, V v) {
+        this.k = k;
+        this.v = v;
+    }
 
-// { "_id" : XX, "user_id" : XXXXXXXX, "text" : "XXXXXXXXXXXXXX", "created_at" : "XXXXXX" }
-// { "_id" : XXXXXX, "name" : "XXXX" }
+    public void setK(K k) {
+        this.k = k;
+    }
+
+    public void setV(V v) {
+        this.v = v;
+    }
+
+    public K getK() {
+        return k;
+    }
+
+    public V getV() {
+        return v;
+    }
+}
 
 class Message
 {
-    private int userId;
+    private Object userId;
 
     public void parse(JSONObject json) throws JSONException
     {
         if (json.has("user_id"))
         {
-            userId = json.optInt("user_id", Integer.MIN_VALUE);
+            userId = json.get("user_id");
         }
         else
         {
@@ -66,18 +79,18 @@ class Message
 
 class User
 {
-    private int id;
+    private String id;
     private String name;
 
     public void parse(JSONObject json) throws JSONException
     {
         if (json.has("_id"))
         {
-            id = json.optInt("_id", Integer.MIN_VALUE);
+            id = json.get("_id").toString();
         }
         else
         {
-            id = Integer.MIN_VALUE;
+            id = "no_user_id";
         }
 
         if (json.has("name"))
@@ -86,13 +99,13 @@ class User
         }
         else
         {
-            name = "";
+            name = "no_user_name";
         }
     }
 
     public String getId()
     {
-        return String.valueOf(id);
+        return id;
     }
 
     public String getName()
@@ -101,115 +114,96 @@ class User
     }
 }
 
-class SortMapperParser
-{
-    private int key;
-    private String value;
 
-    public void parse(String str)
-    {
-        String[] values = str.split("\\s");
-        key = Integer.valueOf(values[0]);
-        value = values[1];
-    }
-
-    public void parse(Text value)
-    {
-        parse(value.toString());
-    }
-
-    public int getKey()
-    {
-        return key;
-    }
-
-    public String getValue() {
-        return value;
-    }
-}
 
 class CountReducerParser
 {
-    private int key;
-    private String value;
+    boolean _name = true;
+    String name = "";
 
-    public void parse(JSONObject json)
+    public boolean hasName() {
+        return _name;
+    }
+
+    public String getName()
     {
-        try {
-            if (json.has("one"))
-            {
-                key++;
-            }
-            else
-            {
-                value = json.optString("name");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        return this.name;
+    }
+
+    public KeyAndValue<String, Integer> parse(KeyAndValue<String, String> input)
+    {
+        JSONObject json = new JSONObject(input.getV());
+        if (json.has("name"))
+        {
+            this.name = json.optString("name");
+            _name = true;
+            return new KeyAndValue<>(name.replace("\t",""), 0);
+        }
+        else if (json.has("one"))
+        {
+            _name = false;
+            return new KeyAndValue<>(input.getK(), 1);
+        }
+        else
+        {
+            _name = false;
+            return new KeyAndValue<>(input.getK(), 0);
         }
     }
 
-    public void parse(Text value)
-    {
-        parse(new JSONObject(value.toString()));
-    }
-
-    public int getKey()
-    {
-        return key;
-    }
-
-    public String getValue()
-    {
-        return value;
-    }
 }
 
 
 class CountMapperParser
 {
-    String key = "";
-    String value = "";
+    private boolean _isValid = false;
 
-    public void parse(JSONObject json) throws JSONException
+    public boolean isValid() {
+        return this._isValid;
+    }
+
+    public KeyAndValue<String, String> parse(JSONObject json) throws JSONException
     {
-        if (json.has("name"))
+        if (json.has("name") && json.has("_id"))
         {
+            this._isValid = true;
+
             User user = new User();
             user.parse(json);
 
-            key = user.getId();
-            value = user.getName();
+            return new KeyAndValue(user.getId(), user.getName());
         }
-        else
+        else if (json.has("user_id") && json.has("_id") && json.has("text") && json.has("created_at"))
         {
+            this._isValid = true;
+
             Message message = new Message();
             message.parse(json);
 
-            key = message.getUserId();
-            value = message.getOne();
+            return new KeyAndValue(message.getUserId(), message.getOne());
+        }
+        else
+        {
+            this._isValid = false;
+            return null;
         }
     }
 
-    public void parse(Text value)
+    public KeyAndValue<String, String> parse(KeyAndValue<Object, String> kv)
     {
-        try{
-            parse(new JSONObject(value.toString()));
+
+        try {
+            return parse(new JSONObject(kv.getV()));
         } catch (JSONException e) {
             e.printStackTrace();
+            _isValid = false;
+            return new KeyAndValue("", "");
         }
     }
 
-    public String getKey()
-    {
-        return key;
-    }
-
-    public String getValue()
-    {
-        return value;
-    }
 }
+
+
 
 public class UserCount
 {
@@ -223,29 +217,44 @@ public class UserCount
             //使用IntWritable.set(int)和Text.set(String)来对IntWritable和Text的object赋值
             //可以参考http://wiki.apache.org/hadoop/WordCount来写程序
 
-            parser.parse(value);
+            KeyAndValue inputKV = new KeyAndValue(key, value.toString());
+            KeyAndValue<String, String> outputKV = parser.parse(inputKV);
 
-            context.write(new Text(parser.getKey()), new Text(parser.getValue()));
+            if (parser.isValid())
+            {
+                context.write(new Text(outputKV.getK()), new Text(outputKV.getV()));
+
+            }
         }
     }
 
     public static class CountReducer extends Reducer<Text,Text,Text,IntWritable>
     {
-        private CountReducerParser parser = new CountReducerParser();
-
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
         {
             //implement here
-
             int total = 0;
             String name = "";
+
             for (Text value: values)
             {
-                parser.parse(value);
-                total = parser.getKey();
-                name = parser.getValue();
+                CountReducerParser crp = new CountReducerParser();
+                KeyAndValue<String, Integer> kv = crp.parse(new KeyAndValue(key.toString(), value.toString()));
+
+                if (crp.hasName())
+                {
+                    name = kv.getK();
+                }
+                else
+                {
+                    total = total + kv.getV();
+                }
             }
-            context.write(new Text(name), new IntWritable(total));
+
+            if (!name.equals(""))
+            {
+                context.write(new Text(name), new IntWritable(total));
+            }
         }
     }
 
@@ -258,7 +267,9 @@ public class UserCount
             //implement here
             parser.parse(value);
 
-            context.write(new IntWritable(parser.getKey()), new Text(parser.getValue()));
+            if (parser.getKey() > 0) {
+                context.write(new IntWritable(parser.getKey()), new Text(parser.getValue()));
+            }
         }
     }
 
@@ -298,38 +309,74 @@ public class UserCount
 
 
         Configuration conf = new Configuration();
-        Job job = new Job(conf, "NameCount-count");
-        job.setJarByClass(UserCount.class);
-        job.setMapperClass(CountMapper.class);
-        job.setReducerClass(CountReducer.class);
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
-
-        FileInputFormat.addInputPath(job, new Path("/input-user"));
-        Path tempDir = new Path("temp");
-        FileOutputFormat.setOutputPath(job, tempDir);
-        //implement here
-        //在这里你可以加入你的另一个job来进行排序
-        //可以使用“job.waitForCompletion(true)“，该方法会开始job并等待job结束，返回值是true代表job成功，否则代表job失败
-        //在SortJob中使用“sortJob.setSortComparatorClass(IntDecreasingComparator.class)”来把你的输出排序方式设置为你自己写的IntDecreasingComparator
-
-
-        // System.exit(job.waitForCompletion(true) ? 0 : 1);
-        job.waitForCompletion(true);
+//        Job job = new Job(conf, "NameCount-count");
+//        job.setJarByClass(UserCount.class);
+//        job.setMapperClass(CountMapper.class);
+//        job.setReducerClass(CountReducer.class);
+//        job.setOutputKeyClass(Text.class);
+//        job.setOutputValueClass(Text.class);
+//
+//        FileInputFormat.addInputPath(job, new Path("/input-user"));
+//        Path tempDir = new Path("temp");
+//        FileOutputFormat.setOutputPath(job, tempDir);
+//        //implement here
+//        //在这里你可以加入你的另一个job来进行排序
+//        //可以使用“job.waitForCompletion(true)“，该方法会开始job并等待job结束，返回值是true代表job成功，否则代表job失败
+//        //在SortJob中使用“sortJob.setSortComparatorClass(IntDecreasingComparator.class)”来把你的输出排序方式设置为你自己写的IntDecreasingComparator
+//
+//
+//        // System.exit(job.waitForCompletion(true) ? 0 : 1);
+//        job.waitForCompletion(true);
 
         Job sortJob = Job.getInstance(conf, "NameCount-sort");
         sortJob.setJarByClass(UserCount.class);
         sortJob.setMapperClass(SortMapper.class);
         sortJob.setReducerClass(SortReducer.class);
-        sortJob.setOutputKeyClass(Text.class);
+        sortJob.setOutputKeyClass(IntWritable.class);
         sortJob.setOutputValueClass(Text.class);
         sortJob.setSortComparatorClass(IntDecreasingComparator.class);
 
-        FileInputFormat.addInputPath(sortJob, tempDir);
-        FileOutputFormat.setOutputPath(sortJob, new Path("/output-user"));
+        Path tempDir1 = new Path("temp/part-r-00000");
+        FileInputFormat.addInputPath(sortJob, tempDir1);
+        FileOutputFormat.setOutputPath(sortJob, new Path("op_temp"));
 
         sortJob.waitForCompletion(true);
 
     }
 }
 
+
+
+class SortMapperParser
+{
+    private int key;
+    private String value;
+
+    public void parse(String str)
+    {
+        String[] values = str.split("\t");
+        if (values.length > 1) {
+            value = values[0];
+            key = Integer.valueOf(values[values.length - 1].trim());
+        }
+        else
+        {
+            value = "";
+            key = -1;
+        }
+    }
+
+    public void parse(Text value)
+    {
+        parse(value.toString());
+    }
+
+    public int getKey()
+    {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+}
