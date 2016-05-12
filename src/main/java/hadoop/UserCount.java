@@ -3,12 +3,15 @@ package hadoop;
 /**
  * Created by huay on 9/05/2016.
  */
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.GzipCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -18,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Map;
 
 class Message
 {
@@ -347,20 +351,16 @@ public class UserCount
         }
     }
 
-
-    public static void main(String[] args) throws Exception
-    {
-
-
-        Configuration conf = new Configuration();
-        FileSystem fs = FileSystem.get(conf);
-
+    private static void runNameCount(Configuration conf, FileSystem fs) throws Exception {
         Job job = Job.getInstance(conf, "NameCount-count");
         job.setJarByClass(UserCount.class);
         job.setMapperClass(CountMapper.class);
         job.setReducerClass(CountReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
+
+        conf.setBoolean(Job.MAP_OUTPUT_COMPRESS, true);
+        conf.setClass(Job.MAP_OUTPUT_COMPRESS_CODEC, GzipCodec.class, CompressionCodec.class);
 
         FileInputFormat.addInputPath(job, new Path("/input-user"));
 
@@ -377,7 +377,9 @@ public class UserCount
 
         // System.exit(job.waitForCompletion(true) ? 0 : 1);
         job.waitForCompletion(true);
+    }
 
+    private static void runSortJob(Configuration conf, FileSystem fs) throws Exception {
         Job sortJob = Job.getInstance(conf, "NameCount-sort");
         sortJob.setJarByClass(UserCount.class);
         sortJob.setMapperClass(SortMapper.class);
@@ -385,6 +387,7 @@ public class UserCount
         sortJob.setOutputKeyClass(IntWritable.class);
         sortJob.setOutputValueClass(Text.class);
         sortJob.setSortComparatorClass(IntDecreasingComparator.class);
+
 
         FileInputFormat.addInputPath(sortJob, new Path("temp/part-r-00000"));
 
@@ -396,6 +399,22 @@ public class UserCount
         FileOutputFormat.setOutputPath(sortJob, sort_output);
 
         sortJob.waitForCompletion(true);
+    }
 
+    private static void printConf(Configuration conf) {
+        for (Map.Entry<String, String> entry : conf) {
+            System.out.printf("%s=%s\n", entry.getKey(), entry.getValue());
+        }
+    }
+
+    public static void main(String[] args) throws Exception
+    {
+        Configuration conf = new Configuration();
+        FileSystem fs = FileSystem.get(conf);
+        printConf(conf);
+
+
+        runNameCount(conf, fs);
+        runSortJob(conf, fs);
     }
 }
