@@ -28,7 +28,7 @@ class Message
     private String userId;
 
     public static String USER_ID_TAG = "user_id";
-    public static String ONE_TAG = "one";
+    public static String ONE_TAG = "o";
 
     public void parse(JSONObject json) throws JSONException
     {
@@ -57,7 +57,7 @@ class User
     public void parse(JSONObject json) throws JSONException
     {
         id = json.get(User.ID_TAG).toString();
-        name = json.optString(User.NAME_TAG, "");
+        name = json.getString(User.NAME_TAG);
     }
 
     public String getId()
@@ -259,7 +259,7 @@ public class UserCount
 {
     public static class CountMapper extends Mapper<Object, Text, Text, Text>
     {
-        CountMapperParser parser = new CountMapperParser();
+
 
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException
         {
@@ -267,6 +267,7 @@ public class UserCount
             //使用IntWritable.set(int)和Text.set(String)来对IntWritable和Text的object赋值
             //可以参考http://wiki.apache.org/hadoop/WordCount来写程序
 
+            CountMapperParser parser = new CountMapperParser();
             parser.parse(key, value.toString());
 
             if (parser.isValid())
@@ -298,7 +299,7 @@ public class UserCount
                 }
             }
 
-            if (!name.equals("") && total > 0)
+            if (!name.equals(""))
             {
                 context.write(new Text(name), new IntWritable(total));
             }
@@ -355,6 +356,7 @@ public class UserCount
         Job job = Job.getInstance(conf, "NameCount-count");
         job.setJarByClass(UserCount.class);
         job.setMapperClass(CountMapper.class);
+        // job.setCombinerClass(CountReducer.class);
         job.setReducerClass(CountReducer.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);

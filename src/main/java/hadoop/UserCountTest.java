@@ -39,13 +39,10 @@ public class UserCountTest {
         return lines;
     }
 
-    public static void main(String[] args) throws IOException {
-
+    private static List<CountMapperParser> map() throws IOException{
         List<String> lines = getLines();
 
         List<CountMapperParser> output_map = new ArrayList<>();
-
-
 
         for (String line: lines) {
             CountMapperParser parser = new CountMapperParser();
@@ -54,8 +51,14 @@ public class UserCountTest {
                 output_map.add(parser);
             }
         }
+        return output_map;
+    }
 
-        Map<String, List<String>> input_reduce = groupBy(output_map);
+    public static void main(String[] args) throws IOException {
+
+
+
+        Map<String, List<String>> input_reduce = groupBy(map());
 
         for (Map.Entry<String, List<String>> mapEntry : input_reduce.entrySet())
         {
@@ -72,13 +75,15 @@ public class UserCountTest {
                 CountReducerParser crp = new CountReducerParser();
                 crp.parse(map_key, v);
 
-                if (crp.isUser())
-                {
-                    name = crp.getK();
-                }
-                else
-                {
-                    total++;
+                if (crp.isValid()){
+                    if (crp.isUser())
+                    {
+                        name = crp.getK();
+                    }
+                    else
+                    {
+                        total = total + crp.getV();
+                    }
                 }
             }
             if (total != 0)
