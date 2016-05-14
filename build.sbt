@@ -10,7 +10,7 @@ val jackson = "org.codehaus.jackson" % "jackson-core-asl" % "1.9.13"
 val akka = "com.typesafe.akka" % "akka-actor_2.11" % "2.3.15"
 val akkaTestkit = "com.typesafe.akka" % "akka-testkit_2.11" % "2.3.15"
 val spark = "org.apache.spark" %% "spark-core" % "1.6.0"
-val junit = "junit" % "junit" % "4.11" % "test"
+val junit = "junit" % "junit" % "4.11"
 val junitinterface = "com.novocode" % "junit-interface" % "0.10" % "test"
 lazy val root = (project in file(".")).
   settings(commonSettings: _*).
