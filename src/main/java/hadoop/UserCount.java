@@ -16,7 +16,9 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -361,6 +363,8 @@ public class UserCount
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
+        job.setOutputFormatClass(SequenceFileOutputFormat.class);
+
         conf.setBoolean(Job.MAP_OUTPUT_COMPRESS, true);
         conf.setClass(Job.MAP_OUTPUT_COMPRESS_CODEC, GzipCodec.class, CompressionCodec.class);
 
@@ -371,6 +375,8 @@ public class UserCount
             fs.delete(tempDir, true);
         }
         FileOutputFormat.setOutputPath(job, tempDir);
+        // FileOutputFormat.setCompressOutput(job, true);
+        // FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
         //implement here
         //在这里你可以加入你的另一个job来进行排序
         //可以使用“job.waitForCompletion(true)“，该方法会开始job并等待job结束，返回值是true代表job成功，否则代表job失败
@@ -390,8 +396,9 @@ public class UserCount
         sortJob.setOutputValueClass(Text.class);
         sortJob.setSortComparatorClass(IntDecreasingComparator.class);
 
+        sortJob.setInputFormatClass(SequenceFileInputFormat.class);
 
-        FileInputFormat.addInputPath(sortJob, new Path("temp/part-r-00000"));
+        FileInputFormat.addInputPath(sortJob, new Path("temp"));
 
         Path sort_output = new Path("op_temp");
         if (fs.exists(sort_output))
