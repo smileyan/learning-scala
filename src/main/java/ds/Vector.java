@@ -59,6 +59,30 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
         }
     }
 
+    public void expand() {
+        if (_size < _capacity) return;
+        if (_capacity < DEFAULT_CAPACITY) _capacity = DEFAULT_CAPACITY;
+
+        T[] oldElem = _elem;
+        _elem = (T[]) Array.newInstance(_elem[0].getClass(), _capacity << 2);
+
+        for (int i = 0; i < _size; i++) {
+            _elem[i] = oldElem[i];
+        }
+    }
+
+    public void shrink() {
+        if (_capacity < DEFAULT_CAPACITY << 1) return;
+        if (_size << 2 > _capacity) return;
+
+        T[] oldElem = _elem;
+        _elem = (T[]) Array.newInstance(_elem[0].getClass(), _capacity >>= 1);
+
+        for (int i = 0; i < _size; i++) {
+            _elem[i] = oldElem[i];
+        }
+    }
+
     public int search(T[] a, T e, int lo, int hi) {
         while (lo < hi) {
             int mi = (lo + hi) >> 1;
@@ -129,16 +153,14 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
     }
 
     private void merge(int lo, int mi, int hi) {
-        int a = lo; // A = _elem[a]
 
         int lb = mi - lo;
-        T[] b = (T[]) Array.newInstance(_elem[0].getClass(), lb);
-        int temp = a;
-        for (int i = 0; i < lb; i++) {
-            b[i] = _elem[temp++];
-        }
-
         int lc = hi - mi;
+
+        T[] b = (T[]) Array.newInstance(_elem[0].getClass(), lb);
+        for (int i = 0; i < lb; i++) {
+            b[i] = _elem[lo + i];
+        }
 
         for (int i = 0, j = 0, k = 0; (j < lb) || (k < lc);) {
             if ((j < lb) && (! (k < lc) || (b[j].compareTo(_elem[mi + k]) <= 0))) {
@@ -159,6 +181,4 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
     public int compareTo(Vector<T> o) {
         return this.compareTo(o);
     }
-
-
 }

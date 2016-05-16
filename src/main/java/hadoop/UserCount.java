@@ -8,6 +8,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.compress.CompressionCodec;
@@ -352,6 +353,23 @@ public class UserCount
             //implement here
             return 0 - super.compare(b1, s1, l1, b2, s2, l2);
         }
+    }
+
+    private static void cleaner(Configuration conf, FileSystem fs) throws Exception {
+        Job job = Job.getInstance(conf, "cleaner");
+        job.setJarByClass(UserCount.class);
+        job.setMapperClass(CountMapper.class);
+
+
+
+        job.setNumReduceTasks(0);
+        job.setOutputFormatClass(SequenceFileOutputFormat.class);
+        SequenceFileOutputFormat.setCompressOutput(job, true);
+        SequenceFileOutputFormat.setOutputCompressorClass(job, GzipCodec.class);
+        SequenceFileOutputFormat.setOutputCompressionType(job,
+                SequenceFile.CompressionType.BLOCK);
+
+
     }
 
     private static void runNameCount(Configuration conf, FileSystem fs) throws Exception {
