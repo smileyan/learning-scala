@@ -3,7 +3,7 @@ package ds;
 /**
  * Created by huay on 17/05/2016.
  */
-public class ListNode<T> {
+public class ListNode<T extends Comparable<T>> {
     public T data;
     public ListNode<T> pred;
     public ListNode<T> succ;
