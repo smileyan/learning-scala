@@ -45,6 +45,52 @@ public class List<T extends Comparable<T>> implements Comparable<List<T>> {
         return p;
     }
 
+    public void selectionSort(ListNode<T> p, int n) {
+        ListNode<T> head = p.pred;
+        ListNode<T> tail = p;
+
+        for (int i = 0; i < n; i++) {
+            tail = tail.succ;
+        }
+
+        while (1 < n) {
+            ListNode<T> max = selectMax(head.succ, n);
+
+            insertB(tail, remove(max));
+
+            tail = tail.pred;
+            n--;
+        }
+    }
+
+    public ListNode<T> selectMax(ListNode<T> p, int n) {
+        ListNode<T> max = p;
+        for (ListNode<T> cur = p; 1 < n; n--) {
+            if (!((cur = cur.succ).data.compareTo(max.data) < 0)) {
+                max = cur;
+            }
+        }
+        return max;
+    }
+
+    public void insertionSort(ListNode<T> p, int n) {
+        for (int r = 0; r < n; r++) {
+            insertA(search(p.data, r, p), p.data);
+            p = p.succ;
+            remove(p.pred);
+        }
+    }
+
+    public ListNode<T> search(T e, int n, ListNode<T> p) {
+        while (0 <= n--) {
+            p = p.pred;
+            if (!(p.data.compareTo(e) > 0)) {
+                break;
+            }
+        }
+        return p;
+    }
+
     public ListNode<T> find(T e, int n, ListNode<T> p) {
         while (0 < n--) {
             p = p.pred;
