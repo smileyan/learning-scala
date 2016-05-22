@@ -23,7 +23,8 @@ lazy val root = (project in file(".")).
     libraryDependencies += spark,
     libraryDependencies += junit,
     libraryDependencies += junitinterface,
-
+    // http://mvnrepository.com/artifact/com.h2database/h2
+    libraryDependencies += "com.h2database" % "h2" % "1.4.191",
     libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.2",
 //    libraryDependencies += "org.apache.mrunit" % "mrunit" % "1.1.0",
     libraryDependencies += "org.json" % "json" % "20160212",
