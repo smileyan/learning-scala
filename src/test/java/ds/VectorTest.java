@@ -32,7 +32,7 @@ public class VectorTest {
 
     @Test
     public void testBinSearch() {
-        Vector<Integer> v = new Vector<>();
+        Vector<Integer> v = new Vector<>(Integer.class);
         Integer[] a = new Integer[3];
         a[0] = 1;
         a[1] = 4;

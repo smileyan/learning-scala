@@ -12,6 +12,7 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
     private int _size;
     private int _capacity;
     private  T[] _elem;
+    private Class<T> type;
 
     public void copyFrom(T[] a, int lo, int hi) {
         _capacity = 2 * (hi - lo);
@@ -31,14 +32,16 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
         copyFrom(a, lo, hi);
     }
 
-    public Vector(){
-
+    public Vector(Class<T> tClass){
+        _size = 0;
+        type = tClass;
     }
 
-    public Vector(Class<T> c, int capacity, int size, T v) {
+    public Vector(Class<T> tClass, int capacity, int size, T v) {
+        type = tClass;
         _capacity = capacity;
 
-        _elem = (T[]) Array.newInstance(c, size);
+        _elem = (T[]) Array.newInstance(type, size);
 
         for (_size = 0; _size < size; _size++) {
             _elem[_size] = v;
@@ -49,22 +52,13 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
         return _elem[rank];
     }
 
-    public Vector(int capacity, int size, T v) {
-        _capacity = capacity;
-
-        _elem = (T[])new Object[size];
-
-        for (_size = 0; _size < size; _size++) {
-            _elem[_size] = v;
-        }
-    }
-
     public void expand() {
         if (_size < _capacity) return;
         if (_capacity < DEFAULT_CAPACITY) _capacity = DEFAULT_CAPACITY;
 
         T[] oldElem = _elem;
-        _elem = (T[]) Array.newInstance(_elem[0].getClass(), _capacity << 2);
+
+        _elem = (T[]) Array.newInstance(type, _capacity << 2);
 
         for (int i = 0; i < _size; i++) {
             _elem[i] = oldElem[i];
@@ -76,7 +70,7 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
         if (_size << 2 > _capacity) return;
 
         T[] oldElem = _elem;
-        _elem = (T[]) Array.newInstance(_elem[0].getClass(), _capacity >>= 1);
+        _elem = (T[]) Array.newInstance(type, _capacity >>= 1);
 
         for (int i = 0; i < _size; i++) {
             _elem[i] = oldElem[i];
@@ -152,12 +146,54 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
         merge(lo, mi, hi);
     }
 
+    public int size() {
+        return _size;
+    }
+
+    public int insert(int r, T e) {
+        expand();
+
+        for (int i = _size; i > r; i--) {
+            _elem[i] = _elem[i - 1];
+        }
+
+        _elem[r] = e;
+        _size++;
+
+        return r;
+    }
+
+    public boolean empty() {
+        return _size == 0;
+    }
+
+    public int remove(int lo, int hi) {
+        if (lo == hi) return 0;
+
+        while (hi < _size) {
+            _elem[lo++] = _elem[hi++];
+        }
+
+        _size = lo;
+        shrink();
+
+        return hi - lo;
+    }
+
+    public T remove(int r) {
+        T e = _elem[r];
+
+        remove(r, r + 1);
+
+        return e;
+    }
+
     private void merge(int lo, int mi, int hi) {
 
         int lb = mi - lo;
         int lc = hi - mi;
 
-        T[] b = (T[]) Array.newInstance(_elem[0].getClass(), lb);
+        T[] b = (T[]) Array.newInstance(type, lb);
         for (int i = 0; i < lb; i++) {
             b[i] = _elem[lo + i];
         }
