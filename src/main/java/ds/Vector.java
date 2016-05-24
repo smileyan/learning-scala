@@ -8,7 +8,7 @@ import java.util.Random;
  */
 public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
 
-    private int DEFAULT_CAPACITY = 1;
+    private int DEFAULT_CAPACITY = 8;
     private int _size;
     private int _capacity;
     private  T[] _elem;
@@ -24,11 +24,13 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
         }
     }
 
-    public Vector(T[] a, int n) {
+    public Vector(Class<T> tClass, T[] a, int n) {
+        type = tClass;
         copyFrom(a, 0, n);
     }
 
-    public Vector(T[] a, int lo, int hi) {
+    public Vector(Class<T> tClass,T[] a, int lo, int hi) {
+        type = tClass;
         copyFrom(a, lo, hi);
     }
 
@@ -37,24 +39,19 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
         type = tClass;
     }
 
-    public Vector(Class<T> tClass, int capacity, int size, T v) {
-        type = tClass;
-        _capacity = capacity;
-
-        _elem = (T[]) Array.newInstance(type, size);
-
-        for (_size = 0; _size < size; _size++) {
-            _elem[_size] = v;
-        }
-    }
 
     public T get(int rank) {
         return _elem[rank];
     }
 
     public void expand() {
-        if (_size < _capacity) return;
-        if (_capacity < DEFAULT_CAPACITY) _capacity = DEFAULT_CAPACITY;
+        if (_size < _capacity) {
+            return;
+        }
+
+        if (_capacity < DEFAULT_CAPACITY) {
+            _capacity = DEFAULT_CAPACITY;
+        }
 
         T[] oldElem = _elem;
 

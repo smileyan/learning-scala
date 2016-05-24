@@ -28,4 +28,17 @@ public class TestStack {
 
         Assert.assertEquals(4, s.size());
     }
+
+    @Test
+    public void testConvert() {
+        Stack<Character> s = new Stack<>(Character.class);
+
+        Stack<Character> ss = s.convert(12345, 8);
+
+        Assert.assertEquals(ss.pop().charValue(), '3');
+        Assert.assertEquals(ss.pop().charValue(), '0');
+        Assert.assertEquals(ss.pop().charValue(), '0');
+        Assert.assertEquals(ss.pop().charValue(), '7');
+        Assert.assertEquals(ss.pop().charValue(), '1');
+    }
 }

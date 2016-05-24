@@ -7,19 +7,7 @@ import org.junit.Test;
 /**
  * Created by huay on 24/01/2016.
  */
-public class VectorTest {
-
-//    List<String> EMPTYLS = emptyList();
-
-//    @Test(expected = EmptyListHasNoHead.class)
-//    public void callingHeadOnAnEmptyListRaises() {
-//        EMPTYLS.head();
-//    }
-//
-//    @Test(expected = EmptyListHasNoTail.class)
-//    public void callingTailOnAnEmptyListRaises() {
-//        EMPTYLS.tail();
-//    }
+public class TestVector {
 
     @Test
     public void testConfiguration() {
@@ -54,7 +42,7 @@ public class VectorTest {
     @Test
     public void testSort() {
 
-        Vector<Integer> v = new Vector<>(new Integer[]{2,4,3,5,2,5,78,95}, 0, 6);
+        Vector<Integer> v = new Vector<>(Integer.class,new Integer[]{2,4,3,5,2,5,78,95}, 0, 6);
 
         v.sort(0, 6);
 
