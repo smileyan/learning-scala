@@ -8,7 +8,7 @@ import org.junit.Test;
  */
 public class TestStack {
     @Test
-    public void test() {
+    public void testBasic() {
         Stack<Integer> s = new Stack<Integer>(Integer.class);
 
         Assert.assertTrue(s.empty());
@@ -31,14 +31,25 @@ public class TestStack {
 
     @Test
     public void testConvert() {
-        Stack<Character> s = new Stack<>(Character.class);
-
-        Stack<Character> ss = s.convert(12345, 8);
+        Stack<Character> ss = Stack.convert(12345, 8);
 
         Assert.assertEquals(ss.pop().charValue(), '3');
         Assert.assertEquals(ss.pop().charValue(), '0');
         Assert.assertEquals(ss.pop().charValue(), '0');
         Assert.assertEquals(ss.pop().charValue(), '7');
         Assert.assertEquals(ss.pop().charValue(), '1');
+    }
+
+    @Test
+    public void testParen() {
+        Character[] c = {'{','(',')','[','(','{','}',')',']','}'};
+        boolean result = Stack.paren(c, 0, c.length - 1);
+
+        Assert.assertEquals(result, true);
+
+        Character[] a = {'(',')','[','(','{','}',')',']','}'};
+        boolean a_result = Stack.paren(a, 0, a.length - 1);
+
+        Assert.assertEquals(a_result, false);
     }
 }

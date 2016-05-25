@@ -21,7 +21,7 @@ public class Stack<T extends Comparable<T>> extends Vector<T>{
         return this.get(size() - 1);
     }
 
-    public Stack<Character> convert(int n, int base) {
+    public static Stack<Character> convert(int n, int base) {
         Stack<Character> s = new Stack<>(Character.class);
         Character digit[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 
@@ -32,5 +32,21 @@ public class Stack<T extends Comparable<T>> extends Vector<T>{
             n /= base;
         }
         return s;
+    }
+
+    public static boolean paren (Character[] exp, int lo, int hi) {
+        Stack<Character> s = new Stack<>(Character.class);
+
+        for (int i = lo; i <= hi; i++) {
+            switch (exp[i]) {
+                case '(': case '[':case '{': s.push(exp[i]); break;
+
+                case ')': if ((s.empty()) || ('(' != s.pop())) return false; break;
+                case ']': if ((s.empty()) || ('[' != s.pop())) return false; break;
+                case '}': if ((s.empty()) || ('{' != s.pop())) return false; break;
+                default: break;
+            }
+        }
+        return s.empty();
     }
 }
