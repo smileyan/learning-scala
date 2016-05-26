@@ -3,8 +3,6 @@ package com.dataman.demo
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkContext, SparkConf}
 
-import scala.collection.immutable.HashMap
-
 /**
   * Created by mymac on 15/11/3.
   */
@@ -19,14 +17,24 @@ object Assignment1 {
 
     val data = sc.textFile("hdfs://192.168.70.141:8020/Assignment1")
 
-//    data.map(doc => parse(doc)).grou
     //please code here.
+    data.flatMap(doc => parse(doc)).groupBy(_._1)
 
     sc.stop()
   }
 
-//  def parse(doc: String): Array[Tuple2[String, String]] = {
+  def parse(doc: String): List[(String, (String, Int))] = {
 
-//    return doc.split(" ").foldLeft(Array[Tuple2[String, String]])
-//  }
+    val title = doc.split(",").head
+
+    doc.split(" ")
+       .drop(0)
+       .foldLeft(List[(String, (String, Int))]())((acc, word) => acc match
+    {
+      case Nil => (word, (title, 0)) :: Nil
+      case h :: t => {
+        (word, (title, h._2._1.length + h._2._2 + 1)) :: acc
+      }
+    })
+  }
 }
