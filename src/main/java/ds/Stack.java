@@ -49,4 +49,43 @@ public class Stack<T extends Comparable<T>> extends Vector<T>{
         }
         return s.empty();
     }
+
+    public float evaluate (char[] s, char[] rpn) {
+        Stack<Float> opnd = new Stack<>(Float.class);
+        Stack<Character> optr = new Stack<>(Character.class);
+
+        optr.push('\0');
+
+        int i = 0;
+        while (!optr.empty()) {
+            if (isdigit(s[i])) {
+                // readNumber(s[i], opnd);
+                // append(rpn, opnd.top());
+            } else {
+                switch ( orderBetween(optr.top(), s[i])) {
+                    case '<' :
+                        break;
+                    case '=' :
+                        break;
+                    case '>' : {
+
+                    }
+                    default :
+                        break;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    private boolean isdigit(Character c) {
+        return false;
+    }
+
+
+
+    private char orderBetween(Character a, char b) {
+        return '=';
+    }
 }
