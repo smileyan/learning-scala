@@ -16,47 +16,30 @@ object Assignment1 {
   case class Row(word: String, positions: List[DocPostion])
 
   def main(args: Array[String]) = {
-    println("############################################################################")
-    if (true) {
-      spark()
+    val conf = new SparkConf().setAppName("Assignment1")
+    if (false) {
+      spark("hdfs://192.168.70.141:8020/Assignment1", conf)
     } else {
-      local()
+      conf.setMaster("local[2]")
+      spark("Assignment1", conf)
     }
   }
 
-  def local() = {
-    val data = List("317,newsgroups rec motorcyclespath cantaloupe srv cs cmu cmu",
-      "318,newsgroups rec motorcyclespath cantaloupe srv cs cmu cs")
+  def spark(fileName: String, conf: SparkConf) = {
 
-    val result = data.flatMap(doc => parse(doc))
-      .groupBy(_._1)
-      .map(word => toJson(tupleToRow(word)))
-    result.foreach(
-      word => println(compact(render(word)))
-    )
-  }
-
-  def spark() = {
-    println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-
-    val conf = new SparkConf().setAppName("assignment1")
     val sc = new SparkContext(conf)
 
     Logger.getRootLogger.setLevel(Level.WARN)
 
-    val data = sc.textFile("hdfs://192.168.70.141:8020/Assignment1")
+    val data = sc.textFile(fileName)
 
-    data.foreach( d => {
-      println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-      println(d)
-    })
     //please code here.
     val result = data.flatMap(doc => parse(doc))
       .groupBy(_._1)
       .map(word => toJson(tupleToRow(word)))
 
     result.foreach(
-      word => println(compact(render(word)))
+      json => println(compact(render(json)))
     )
     sc.stop()
   }
@@ -79,6 +62,8 @@ object Assignment1 {
 
     val title = doc.split(",").head
 
+    Logger.getRootLogger.warn("============" + title + "===============")
+
     val content = doc.substring(title.length + 1)
 
     content.split("\\s").foldLeft(List[(String, Int)]())((acc, word) => acc match
@@ -90,12 +75,5 @@ object Assignment1 {
     }).groupBy(_._1).toList.map(w => {
       (w._1, (title, w._2.map(v => v._2))) // (word, (doc_id, [1,2]))
     })
-  }
-
-  def test() = {
-    val docs = List("317,newsgroups rec motorcyclespath cantaloupe srv cs cmu cmu",
-      "318,newsgroups rec motorcyclespath cantaloupe srv cs cmu cs")
-
-    docs.flatMap(d => parse(d)).groupBy(_._1).map(word => tupleToRow(word))
   }
 }
