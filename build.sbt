@@ -25,8 +25,15 @@ lazy val root = (project in file(".")).
     libraryDependencies += junitinterface,
     // http://mvnrepository.com/artifact/com.h2database/h2
     libraryDependencies += "com.h2database" % "h2" % "1.4.191",
-    libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.2",
-//    libraryDependencies += "org.apache.mrunit" % "mrunit" % "1.1.0",
+
+    // libraryDependencies += "org.apache.hadoop" % "hadoop-client" % "2.7.2",
+    // http://mvnrepository.com/artifact/org.apache.hadoop/hadoop-common
+    // libraryDependencies += "org.apache.hadoop" % "hadoop-common" % "2.7.2",
+    // http://mvnrepository.com/artifact/org.apache.hadoop/hadoop-hdfs
+    // libraryDependencies += "org.apache.hadoop" % "hadoop-hdfs" % "2.7.2",
+    // http://mvnrepository.com/artifact/org.apache.hadoop/hadoop-minicluster
+    libraryDependencies += "org.apache.hadoop" % "hadoop-minicluster" % "2.7.2",
+
     libraryDependencies += "org.json" % "json" % "20160212",
 
     scalacOptions in Test ++= Seq("-Yrangepos")

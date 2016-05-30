@@ -4,6 +4,10 @@ import org.apache.hadoop.conf.Configuration;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
 /**
  * Created by huay on 24/01/2016.
  */
@@ -48,5 +52,32 @@ public class TestVector {
 
         Assert.assertEquals(v.get(0) * 1, 2);
         Assert.assertEquals(v.get(5) * 1, 5);
+    }
+
+    @Test
+    public void testSimpleDateFormat() {
+        String[] dates = { "Jan 11,  2003", "6/11/1969","08/22/54" };
+
+        SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
+
+        String p1 = "MMM dd y";
+        String p2 = "MM dd y";
+
+        DateFormat df;
+        for (int i = 0; i < dates.length; i++) {
+            String date = dates[i].replace(",", " ").replace("/", " ");
+
+            if (Character.isDigit(date.trim().charAt(0))) {
+                df = new SimpleDateFormat(p2);
+            } else {
+                df = new SimpleDateFormat(p1);
+            }
+
+            try {
+                System.out.println(formatter.format(df.parse(date)));
+            } catch (ParseException p) {
+                System.out.println("date ==== " + date);
+            }
+        }
     }
 }

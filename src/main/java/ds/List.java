@@ -23,6 +23,10 @@ public class List<T extends Comparable<T>> implements Comparable<List<T>> {
         _size = 0;
     }
 
+    public List() {
+        init();
+    }
+
     public List(ListNode<T> p, int n) {
         copyNodes(p, n);
     }
@@ -91,6 +95,10 @@ public class List<T extends Comparable<T>> implements Comparable<List<T>> {
         return p;
     }
 
+    public boolean empty() {
+        return _size <= 0;
+    }
+
     public ListNode<T> find(T e, int n, ListNode<T> p) {
         while (0 < n--) {
             p = p.pred;
@@ -106,6 +114,8 @@ public class List<T extends Comparable<T>> implements Comparable<List<T>> {
 
         p.pred.succ = p.succ; // 后继
         p.succ.pred = p.pred; // 前驱
+
+        _size--;
 
         return e; // 返回备份的数值
     }
