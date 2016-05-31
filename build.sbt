@@ -35,6 +35,8 @@ lazy val root = (project in file(".")).
     libraryDependencies += "org.apache.hadoop" % "hadoop-minicluster" % "2.7.2",
 
     libraryDependencies += "org.json" % "json" % "20160212",
+    // http://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
+    libraryDependencies += "org.hamcrest" % "hamcrest-all" % "1.3",
 
     scalacOptions in Test ++= Seq("-Yrangepos")
   )
