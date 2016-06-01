@@ -12,6 +12,10 @@ import java.io.IOException;
  */
 public class MaxTemperatureMapper extends Mapper<LongWritable, Text, Text, IntWritable>{
 
+    enum Temperature {
+        OVER_100
+    }
+
     private NcdcRecordParser parser = new NcdcRecordParser();
 
     @Override
@@ -20,6 +24,12 @@ public class MaxTemperatureMapper extends Mapper<LongWritable, Text, Text, IntWr
         parser.parse(value);
 
         if (parser.isValidTemperature()) {
+            int airTemperature = parser.getAirTemperature();
+            if (airTemperature > 10000) {
+                System.err.println("Temperature over 100 degrees for input" + value);
+                context.setStatus("Detected possibly corrupt record: see logs.");
+                context.getCounter(Temperature.OVER_100).increment(1);
+            }
            context.write(new Text(parser.getYear()), new IntWritable(parser.getAirTemperature()));
         }
     }
