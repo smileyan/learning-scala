@@ -12,6 +12,7 @@ val akkaTestkit = "com.typesafe.akka" % "akka-testkit_2.11" % "2.3.15"
 val spark = "org.apache.spark" %% "spark-core" % "1.6.0"
 val junit = "junit" % "junit" % "4.11"
 val junitinterface = "com.novocode" % "junit-interface" % "0.10" % "test"
+
 lazy val root = (project in file(".")).
   settings(commonSettings: _*).
   settings(
@@ -37,6 +38,15 @@ lazy val root = (project in file(".")).
     libraryDependencies += "org.json" % "json" % "20160212",
     // http://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
     libraryDependencies += "org.hamcrest" % "hamcrest-all" % "1.3",
+    // http://mvnrepository.com/artifact/org.apache.hive/hive-exec
+    libraryDependencies += "org.apache.hive" % "hive-exec" % "1.2.1",
+    // http://mvnrepository.com/artifact/org.apache.pig/pig
+    libraryDependencies += "org.apache.pig" % "pig" % "0.15.0",
 
     scalacOptions in Test ++= Seq("-Yrangepos")
   )
+
+resolvers ++= Seq("clojars" at "https://clojars.org/repo",
+  "conjars" at "http://conjars.org/repo",
+  "plugins" at "http://repo.spring.io/plugins-release",
+  "sonatype" at "http://oss.sonatype.org/content/groups/public/")
