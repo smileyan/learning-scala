@@ -3,31 +3,15 @@ package ds;
 /**
  * Created by huay on 4/06/2016.
  */
-public class BinNode<T> implements Comparable<T> {
-    public T data;
-    public BinNode<T> parent;
-    public BinNode<T> lc;
-    public BinNode<T> rc;
-    public int height;
-    int npl;
+public class BinNode<T extends Comparable<T>> implements Comparable<BinNode<T>> {
+    public T data = null;
+    public BinNode<T> parent = null;
+    public BinNode<T> lc = null;
+    public BinNode<T> rc = null;
+    public int height = 0;
+    int npl = 0;
 
-    public BinNode () {
-        parent = null;
-        lc = null;
-        rc = null;
-        height = 0;
-        npl = 0;
-    }
-
-    public BinNode(T e) {
-        new BinNode<>(e, null);
-    }
-
-    public BinNode(T e, BinNode<T> p) {
-        new BinNode<>(e, p, null, null, 0, 0);
-    }
-
-    public BinNode(T e, BinNode<T> p, BinNode<T> lc, BinNode<T> rc, int height, int npl) {
+    private void init(T e, BinNode<T> p, BinNode<T> lc, BinNode<T> rc, int height, int npl) {
         this.data = e;
         this.parent = p;
         this.lc = lc;
@@ -36,8 +20,24 @@ public class BinNode<T> implements Comparable<T> {
         this.npl = npl;
     }
 
+    public BinNode () {
+       init(null, null, null, null, 0, 0);
+    }
+
+    public BinNode(T e) {
+        init(e, null, null, null, 0, 0);
+    }
+
+    public BinNode(T e, BinNode<T> p) {
+        init(e, p, null, null, 0, 0);
+    }
+
+    public BinNode(T e, BinNode<T> p, BinNode<T> lc, BinNode<T> rc, int height, int npl) {
+       init(e, p, lc, rc, height, npl);
+    }
+
     @Override
-    public int compareTo(T o) {
+    public int compareTo(BinNode<T> o) {
         return this.compareTo(o);
     }
 
@@ -74,15 +74,15 @@ public class BinNode<T> implements Comparable<T> {
     }
 
     public static boolean hasParent(BinNode x) {
-        return !isRChild(x);
+        return !isRoot(x);
     }
 
     public static boolean hasLChild(BinNode x) {
-        return x.lc == null;
+        return x.lc != null;
     }
 
     public static boolean hasRChild(BinNode x) {
-        return x.rc == null;
+        return x.rc != null;
     }
 
     public static boolean hasChild(BinNode x) {
@@ -124,12 +124,12 @@ public class BinNode<T> implements Comparable<T> {
     }
 
     public BinNode<T> insertAsLC(T e) {
-        lc = new BinNode<>(e, this);
-        return lc;
+        this.lc = new BinNode<>(e, this);
+        return this.lc;
     }
 
     public BinNode<T> insertAsRc(T e) {
-        rc = new BinNode<>(e, this);
-        return rc;
+        this.rc = new BinNode<>(e, this);
+        return this.rc;
     }
 }

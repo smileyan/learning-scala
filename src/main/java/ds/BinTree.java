@@ -1,9 +1,11 @@
 package ds;
 
+import java.util.function.Function;
+
 /**
  * Created by huay on 4/06/2016.
  */
-public class BinTree<T> implements Comparable<T>{
+public class BinTree<T extends Comparable<T>> implements Comparable<BinTree<T>>{
     private int _size;
     private BinNode<T> _root;
 
@@ -98,7 +100,39 @@ public class BinTree<T> implements Comparable<T>{
     }
 
     @Override
-    public int compareTo(T o) {
+    public int compareTo(BinTree<T> o) {
         return this.compareTo(o);
     }
+
+    public void travPre_R(BinNode<T> x, Function<T, Void> fun) {
+        if (!(x == null)) {
+            return;
+        }
+        fun.apply(x.data);
+
+        travPre_R(x.lc, fun);
+        travPre_R(x.rc, fun);
+    }
+
+    private void visitAlongLeftBranch(BinNode<T> x, Function<T, Void> visit, java.util.Stack<BinNode<T>> s) {
+        while (x != null) {
+            visit.apply(x.data);
+            s.push(x.rc);
+            x = x.lc;
+        }
+    }
+
+//    public void travPre_I2(final BinNode<T> x, Function<T, Void> visit) {
+//        java.util.Stack<BinNode<T>> s = new java.util.Stack<>();
+//        //Stack<BinNode<T>> s = new Stack<>(null);
+//        while (true) {
+//            visitAlongLeftBranch(x, visit, s);
+//
+//            if (s.empty()) {
+//                break;
+//            } else {
+//                x = s.pop();
+//            }
+//        }
+//    }
 }

@@ -5,7 +5,7 @@ package ds;
  */
 public class Stack<T extends Comparable<T>> extends Vector<T>{
 
-    public Stack (Class<T> tClass) {
+    public Stack (Class<? extends T> tClass) {
         super(tClass);
     }
 

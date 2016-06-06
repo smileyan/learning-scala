@@ -6,13 +6,13 @@ import java.util.Random;
 /**
  * Created by huay on 14/05/2016.
  */
-public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
+public class Vector<T extends Comparable<T>> {
 
     private int DEFAULT_CAPACITY = 8;
     private int _size;
     private int _capacity;
     private  T[] _elem;
-    private Class<T> type;
+    private Class<? extends T> type;
 
     public void copyFrom(T[] a, int lo, int hi) {
         _capacity = 2 * (hi - lo);
@@ -29,14 +29,14 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
         copyFrom(a, 0, n);
     }
 
-    public Vector(Class<T> tClass,T[] a, int lo, int hi) {
+    public Vector(Class tClass,T[] a, int lo, int hi) {
         type = tClass;
         copyFrom(a, lo, hi);
     }
 
-    public Vector(Class<T> tClass){
-        _size = 0;
+    public Vector(Class<? extends T> tClass){
         type = tClass;
+        _size = 0;
     }
 
 
@@ -208,10 +208,5 @@ public class Vector<T extends Comparable<T>> implements Comparable<Vector<T>> {
                 k++;
             }
         }
-    }
-
-    @Override
-    public int compareTo(Vector<T> o) {
-        return this.compareTo(o);
     }
 }
