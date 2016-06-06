@@ -5,7 +5,7 @@ import java.util.function.Function;
 /**
  * Created by huay on 4/06/2016.
  */
-public class BinTree<T extends Comparable<T>> implements Comparable<BinTree<T>>{
+public class BinTree<T extends Comparable<T>> {
     private int _size;
     private BinNode<T> _root;
 
@@ -99,11 +99,6 @@ public class BinTree<T extends Comparable<T>> implements Comparable<BinTree<T>>{
         return n;
     }
 
-    @Override
-    public int compareTo(BinTree<T> o) {
-        return this.compareTo(o);
-    }
-
     public void travPre_R(BinNode<T> x, Function<T, Void> fun) {
         if (!(x == null)) {
             return;
@@ -122,17 +117,48 @@ public class BinTree<T extends Comparable<T>> implements Comparable<BinTree<T>>{
         }
     }
 
-//    public void travPre_I2(final BinNode<T> x, Function<T, Void> visit) {
-//        java.util.Stack<BinNode<T>> s = new java.util.Stack<>();
-//        //Stack<BinNode<T>> s = new Stack<>(null);
-//        while (true) {
-//            visitAlongLeftBranch(x, visit, s);
-//
-//            if (s.empty()) {
-//                break;
-//            } else {
-//                x = s.pop();
-//            }
-//        }
-//    }
+    public void travPre_I2(BinNode<T> x, Function<T, Void> visit) {
+        java.util.Stack<BinNode<T>> s = new java.util.Stack<>();
+
+        while (true) {
+            visitAlongLeftBranch(x, visit, s);
+
+            if (s.empty()) {
+                break;
+            } else {
+                x = s.pop();
+            }
+        }
+    }
+
+    public void travIn_R (BinNode<T> x, Function<T, Void> visit) {
+        if (x == null) {
+            return;
+        }
+        travIn_R(x.lc, visit);
+        visit.apply(x.data);
+        travIn_R(x.rc, visit);
+    }
+
+    private void goAloneLeftBranch(BinNode<T> x, java.util.Stack<BinNode<T>> s) {
+        while (x != null) {
+            s.push(x);
+            x = x.lc;
+        }
+    }
+
+    public void travIn_I1(BinNode<T> x, Function<T, Void> visit) {
+        java.util.Stack<BinNode<T>> s = new java.util.Stack<>();
+
+        while (true) {
+            goAloneLeftBranch(x,s);
+            if (s.empty()) {
+                break;
+            }
+
+            x = s.pop();
+            visit.apply(x.data);
+            x = x.rc;
+        }
+    }
 }
