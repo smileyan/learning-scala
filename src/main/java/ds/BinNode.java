@@ -3,7 +3,7 @@ package ds;
 /**
  * Created by huay on 4/06/2016.
  */
-public class BinNode<T extends Comparable<T>> implements Comparable<BinNode<T>> {
+public class BinNode<T extends Comparable<T>> {
     public T data = null;
     public BinNode<T> parent = null;
     public BinNode<T> lc = null;
@@ -34,11 +34,6 @@ public class BinNode<T extends Comparable<T>> implements Comparable<BinNode<T>> 
 
     public BinNode(T e, BinNode<T> p, BinNode<T> lc, BinNode<T> rc, int height, int npl) {
        init(e, p, lc, rc, height, npl);
-    }
-
-    @Override
-    public int compareTo(BinNode<T> o) {
-        return this.compareTo(o);
     }
 
     public static int stature(BinNode p) {

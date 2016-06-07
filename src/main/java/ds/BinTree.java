@@ -27,7 +27,7 @@ public class BinTree<T extends Comparable<T>> {
         return _root;
     }
 
-    public int updateHeight(BinNode<T> x) {
+    public static int updateHeight(BinNode x) {
         x.height = 1 + Math.max(BinNode.stature(x.lc), BinNode.stature(x.rc));
         return x.height;
     }
