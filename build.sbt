@@ -42,11 +42,19 @@ lazy val root = (project in file(".")).
     libraryDependencies += "org.apache.hive" % "hive-exec" % "1.2.1",
     // http://mvnrepository.com/artifact/org.apache.pig/pig
     libraryDependencies += "org.apache.pig" % "pig" % "0.15.0",
+    // http://mvnrepository.com/artifact/jline/jline
+    libraryDependencies += "jline" % "jline" % "2.12.1",
+      // http://mvnrepository.com/artifact/org.apache.sqoop/sqoop
+    libraryDependencies += "org.apache.sqoop" % "sqoop" % "1.4.6",
 
     scalacOptions in Test ++= Seq("-Yrangepos")
   )
 
-resolvers ++= Seq("clojars" at "https://clojars.org/repo",
+resolvers ++= Seq(
+  "Maven central" at "http://repo1.maven.org/maven2/",
+  "Hadoop Releases" at "https://repository.cloudera.com/content/repositories/releases/",
+  "clojars" at "https://clojars.org/repo",
   "conjars" at "http://conjars.org/repo",
   "plugins" at "http://repo.spring.io/plugins-release",
-  "sonatype" at "http://oss.sonatype.org/content/groups/public/")
+  "sonatype" at "http://oss.sonatype.org/content/groups/public/",
+  "Hortonworks Releases" at "http://repo.hortonworks.com/content/repositories/releases/")
