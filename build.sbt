@@ -44,8 +44,12 @@ lazy val root = (project in file(".")).
     libraryDependencies += "org.apache.pig" % "pig" % "0.15.0",
     // http://mvnrepository.com/artifact/jline/jline
     libraryDependencies += "jline" % "jline" % "2.12.1",
-      // http://mvnrepository.com/artifact/org.apache.sqoop/sqoop
-    libraryDependencies += "org.apache.sqoop" % "sqoop" % "1.4.6",
+    // http://mvnrepository.com/artifact/org.apache.sqoop/sqoop
+    libraryDependencies += "org.apache.sqoop" % "sqoop" % "1.4.6.2.4.2.5-1",
+    // http://mvnrepository.com/artifact/org.apache.crunch/crunch-core
+    libraryDependencies += "org.apache.crunch" % "crunch-core" % "0.14.0",
+    // http://mvnrepository.com/artifact/org.apache.crunch/crunch-test
+    libraryDependencies += "org.apache.crunch" % "crunch-test" % "0.14.0",
 
     scalacOptions in Test ++= Seq("-Yrangepos")
   )
