@@ -1,15 +1,16 @@
 package hadoop.c18;
 
+import com.google.common.collect.Iterables;
 import org.apache.crunch.*;
 import org.apache.crunch.fn.Aggregators;
 import org.apache.crunch.impl.mem.MemPipeline;
-import org.apache.crunch.test.TemporaryPath;
 import org.hamcrest.core.Is;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
 
 import static org.apache.crunch.types.writable.Writables.*;
 
@@ -87,9 +88,6 @@ public class PrimitiveOperationsTest implements Serializable {
         // Assert.assertEquals("{(6,cherry),(5,apple),(6,banana)}", PCollections.dump(c));
     }
 
-    @Rule
-    public transient TemporaryPath tmpDir = new TemporaryPath();
-
     @Test
     public void testGrouping() throws Exception {
         PCollection<String> a = MemPipeline.collectionOf("cherry", "apple", "banana");
@@ -105,5 +103,67 @@ public class PrimitiveOperationsTest implements Serializable {
         PGroupedTable<Integer, String> c1 = b.groupByKey();
         PTable<Integer, String> d = c1.combineValues(Aggregators.STRING_CONCAT(";", false));
         Assert.assertThat("{(5,apple),(6,cherry;banana)}", Is.is(PCollections.dump(d)));
+
+        d = b.groupByKey().combineValues(new CombineFn<Integer, String>() { // since value iterator is single use
+            @Override
+            public void process(Pair<Integer, Iterable<String>> input, Emitter<Pair<Integer, String>> emitter) {
+                StringBuffer sb = new StringBuffer();
+                for (Iterator i = input.second().iterator(); i.hasNext(); ) {
+                    sb.append(i.next());
+                    if (i.hasNext()) {
+                        sb.append(";");
+                    }
+                }
+                emitter.emit(Pair.of(input.first(), sb.toString()));
+            }
+        });
+        Assert.assertThat("{(5,apple),(6,cherry;banana)}", Is.is(PCollections.dump(d)));
+
+        c = b.groupByKey();
+
+        PTable<Integer, Integer> f = c.mapValues(new MapFn<Iterable<String>, Integer>() {
+            @Override
+            public Integer map(Iterable<String> input) {
+                return Iterables.size(input);
+            }
+        }, ints());
+        Assert.assertThat("{(5,1),(6,2)}", Is.is(PCollections.dump(f)));
+
+        PTable<Integer, String> g = b.groupByKey().ungroup();
+        Assert.assertThat("{(5,apple),(6,cherry),(6,banana)}", Is.is(PCollections.dump(g)));
+    }
+
+    @Test
+    public void testPTableCollectValues() throws Exception {
+        PCollection<String> a = MemPipeline.typedCollectionOf(strings(), "cherry", "apple", "banana");
+        PTable<Integer, String> b = a.by(new MapFn<String, Integer>() {
+            @Override
+            public Integer map(String input) {
+                return input.length();
+            }
+        }, ints());
+        Assert.assertThat("{(6,cherry),(5,apple),(6,banana)}", Is.is(PCollections.dump(b)));
+
+        PTable<Integer, Collection<String>> c = b.collectValues();
+        Assert.assertThat("{(5,[apple]),(6,[cherry, banana])}", Is.is(PCollections.dump(c)));
+    }
+    @Test
+    public void testPCollectionStats() throws Exception {
+        PCollection<String> a = MemPipeline.typedCollectionOf(strings(),
+                "cherry", "apple", "banana", "banana");
+
+        Assert.assertThat(4L, Is.is(a.length().getValue()));
+
+        Assert.assertThat("apple", Is.is(a.min().getValue()));
+        Assert.assertThat("cherry", Is.is(a.max().getValue()));
+
+        PTable<String, Long> b = a.count();
+        Assert.assertThat("{(apple,1),(banana,2),(cherry,1)}", Is.is(PCollections.dump(b)));
+
+        PTable<String, Long> c = b.top(1);
+        Assert.assertThat("{(banana,2)}", Is.is(PCollections.dump(c)));
+
+        PTable<String, Long> d = b.bottom(2);
+        Assert.assertThat("{(apple,1),(cherry,1)}", Is.is(PCollections.dump(d)));
     }
 }
