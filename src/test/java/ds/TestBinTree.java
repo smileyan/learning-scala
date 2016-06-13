@@ -51,4 +51,48 @@ public class TestBinTree {
         tree.insertAsRoot(1);
         Assert.assertThat(tree.empty(), Is.is(false));
     }
+
+    @Test
+    public void testRoot() {
+        BinTree<Integer> tree = new BinTree<>();
+        tree.insertAsRoot(6);
+
+        Assert.assertThat(tree.root().data, Is.is(6));
+    }
+
+    @Test
+    public void testInsertAsLC() {
+        BinTree<Integer> tree = new BinTree<>();
+        tree.insertAsRoot(6);
+
+        Assert.assertThat(6, Is.is(tree.root().data));
+        Assert.assertThat(1, Is.is(tree.size()));
+        Assert.assertThat(tree.root().height, Is.is(0));
+
+        BinNode<Integer> lc = tree.insertAsLC(tree.root(), 1);
+        Assert.assertThat(tree.size(), Is.is(2));
+        Assert.assertThat(lc.parent, Is.is(tree.root()));
+        Assert.assertThat(tree.root().lc, Is.is(lc));
+        Assert.assertThat(tree.root().height, Is.is(1));
+        Assert.assertThat(tree.root().lc.height, Is.is(0));
+        Assert.assertThat(tree.root().lc.data, Is.is(1));
+    }
+
+    @Test
+    public void testInsertAsRC() {
+        BinTree<Integer> tree = new BinTree<>();
+        tree.insertAsRoot(6);
+
+        Assert.assertThat(6, Is.is(tree.root().data));
+        Assert.assertThat(1, Is.is(tree.size()));
+        Assert.assertThat(tree.root().height, Is.is(0));
+
+        BinNode<Integer> rc = tree.insertAsRC(tree.root(), 1);
+        Assert.assertThat(tree.size(), Is.is(2));
+        Assert.assertThat(rc.parent, Is.is(tree.root()));
+        Assert.assertThat(tree.root().rc, Is.is(rc));
+        Assert.assertThat(tree.root().height, Is.is(1));
+        Assert.assertThat(tree.root().rc.height, Is.is(0));
+        Assert.assertThat(tree.root().rc.data, Is.is(1));
+    }
 }

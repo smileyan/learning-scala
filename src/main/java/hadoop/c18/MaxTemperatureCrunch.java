@@ -1,0 +1,56 @@
+package hadoop.c18;
+
+import hadoop.c12.NcdcRecordParser;
+import org.apache.crunch.*;
+import org.apache.crunch.fn.Aggregators;
+import org.apache.crunch.impl.mr.MRPipeline;
+import org.apache.crunch.io.To;
+
+import static org.apache.crunch.types.writable.Writables.*;
+
+/**
+ * Created by huay on 9/06/2016.
+ */
+public class MaxTemperatureCrunch {
+
+    public static void main(String[] args) throws Exception {
+        // checking of comand-line arguments
+        if (args.length != 2) {
+            System.err.println("Usage: MaxTemperatureCrunch <input path> <output path>");
+            System.exit(-1);
+        }
+
+        // represents the computation that we want to run.
+        // MRPileline, MemPipeline or SparkPipeline
+        Pipeline pipeline = new MRPipeline(MaxTemperatureCrunch.class);
+        // receives data from one or more input sources
+        // and convert a text file into Pcollection of String objects
+        PCollection<String> records = pipeline.readTextFile(args[0]);
+
+        // parse each line of the input file and filter out any bad records.
+        // paralleDo applies a function to every element in the PCollection
+        // and returns a new PCollection.
+        PTable<String, Integer> yearTemperatures = records
+                .parallelDo(toYearTempPairsFn(), tableOf(strings(), ints()));
+        PTable<String, Integer> maxTemps = yearTemperatures
+                .groupByKey()
+                .combineValues(Aggregators.MAX_INTS());
+
+        maxTemps.write(To.textFile(args[1]));
+        PipelineResult result = pipeline.done();
+        System.exit(result.succeeded()? 0 : 1);
+    }
+
+    static DoFn<String, Pair<String, Integer>> toYearTempPairsFn() {
+        return new DoFn<String, Pair<String, Integer>>() {
+            NcdcRecordParser parser = new NcdcRecordParser();
+            @Override
+            public void process(String input, Emitter<Pair<String, Integer>> emitter) {
+                parser.parse(input);
+                if (parser.isValidTemperature()) {
+                    emitter.emit(Pair.of(parser.getYear(), parser.getAirTemperature()));
+                }
+            }
+        };
+    }
+}
