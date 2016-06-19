@@ -52,6 +52,8 @@ lazy val root = (project in file(".")).
     libraryDependencies += "org.apache.crunch" % "crunch-test" % "0.14.0",
     // http://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk
     libraryDependencies += "com.amazonaws" % "aws-java-sdk" % "1.11.7",
+    // https://mvnrepository.com/artifact/org.apache.mahout/mahout-core
+    libraryDependencies += "org.apache.mahout" % "mahout-core" % "0.9",
 
     scalacOptions in Test ++= Seq("-Yrangepos")
   )
